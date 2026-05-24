@@ -1,9 +1,9 @@
 <div align="center">
 
-<a href="https://haoz19.github.io/world-tracing-page/" target="_blank">
+<a href="https://www.worldlabs.ai/" target="_blank">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/wt-logo-for-dark.png">
-    <img src="assets/wt-logo-for-light.png" alt="World Tracing" width="96">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/worldlabs_logo_for_dark.png">
+    <img src="assets/worldlabs_logo_for_light.png" alt="World Labs" width="84">
   </picture>
 </a>
 
