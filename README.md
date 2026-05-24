@@ -31,10 +31,6 @@
   <a href="./LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white"></a>
 </p>
 
-[Object model](https://huggingface.co/haoz19/object-model-6layer) &nbsp;·&nbsp;
-[Scene model](https://huggingface.co/haoz19/scene-model-6layer) &nbsp;·&nbsp;
-[Dynamic model](https://huggingface.co/haoz19/dynamic-model-16frame)
-
 </div>
 
 <p align="center">
