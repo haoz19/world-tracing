@@ -60,6 +60,10 @@ behind it, giving a richer 3D scaffold than a single mono-depth map.
 
 This is the inference-only release.
 
+> 💛 **If you find World Tracing useful**, please consider [⭐ starring this
+> repo](https://github.com/haoz19/world-tracing) and [citing our
+> paper](#citation) — it really helps us prioritise future releases.
+
 ## Released checkpoints
 
 All three checkpoints are hosted on **Hugging Face Hub**:
