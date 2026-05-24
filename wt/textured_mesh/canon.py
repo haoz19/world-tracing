@@ -2,7 +2,7 @@
 
 TRELLIS.2 expects 3D content inside the cube ``[-0.5, 0.5]^3`` with **Z-up**
 (``utils3d.torch.extrinsics_look_at(origin, (0,0,0), (0,0,1))`` inside
-``trellis2/utils/render_utils.py``).  Our multilayer-depth model emits XYZ
+``trellis2/utils/render_utils.py``).  Our multilayer-geometry model emits XYZ
 in OpenCV camera space: ``+x`` right, ``+y`` down, ``+z`` forward.
 
 This module provides the bidirectional mapping (forward for voxelisation,

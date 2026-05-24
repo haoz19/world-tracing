@@ -2,7 +2,7 @@
 
 The full ``wlt.torchcam`` module is a fully-featured pin-hole camera library
 (extrinsic/intrinsic dataclass, rays, image resizing, etc.).  Our released
-multilayer-depth inference path never builds or consumes a Camera object
+multilayer-geometry inference path never builds or consumes a Camera object
 (we pass ``camera=None`` everywhere, which is the default for the r75b /
 r69e / r76 configs), so we only need to make ``torchcam.Camera`` resolvable
 as a type annotation.

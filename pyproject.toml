@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "wt"
 version = "0.1.0"
-description = "World Tracing — multilayer-depth diffusion for image / scene / dynamic-clip 3D point clouds."
+description = "World Tracing — multilayer-geometry diffusion for image / scene / dynamic-clip 3D point clouds."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -19,7 +19,7 @@ keywords = [
     "point-cloud",
     "diffusion",
     "depth-estimation",
-    "multilayer-depth",
+    "multilayer-geometry",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

@@ -1,4 +1,4 @@
-"""World Tracing (``wt``) -- multilayer-depth diffusion model release."""
+"""World Tracing (``wt``) -- multilayer-geometry diffusion model release."""
 
 from wt.model import MultilayerXYZModel
 from wt.inference import (

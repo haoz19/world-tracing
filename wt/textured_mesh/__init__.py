@@ -1,6 +1,6 @@
 """Textured-mesh export via the public TRELLIS.2 stack.
 
-This module bridges our multilayer-depth point cloud and the public
+This module bridges our multilayer-geometry point cloud and the public
 ``microsoft/TRELLIS.2-4B`` image-to-3D pipeline.  We **skip** TRELLIS.2's
 Stage-1 sparse-structure diffusion and feed it the voxel coords derived
 from our predicted XYZ instead, then run TRELLIS.2's Stage 2 (shape SLat)

@@ -353,7 +353,7 @@ def preprocess_rgba_for_model(
     max_object_ratio: float = 2.0 / 3.0,
     bg_color: tuple[int, int, int] | None = (0, 0, 0),
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Prepare a single RGBA image for the multilayer-depth model.
+    """Prepare a single RGBA image for the multilayer-geometry model.
 
     Args:
         rgba_uint8: ``H×W×4`` uint8 RGBA image.  Alpha channel doubles as the

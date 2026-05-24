@@ -1,24 +1,32 @@
-"""Run scene multilayer-depth inference on a single full-frame RGB image.
+"""Run scene multilayer-geometry inference on a single full-frame RGB image.
 
 Usage
 -----
 
 .. code-block:: bash
 
+    # default: 4-seed sweep (seeds 0,1,2,3), spread along +X in one .rrd
     python examples/infer_scene.py \
         --image examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png \
-        --ckpt  path/to/r69e_v2_evermotion_ithappy_504.pt \
+        --ckpt  hf://haoz19/scene-model-6layer \
         --out   /tmp/wt_scene.rrd
 
-Twenty hand-picked scene samples (4 featured + 16 more) live under
-``examples/test_images/scene/`` -- see ``examples/test_images/README.md``.
+    # single deterministic seed (fastest path)
+    python examples/infer_scene.py \
+        --image examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png \
+        --ckpt  hf://haoz19/scene-model-6layer \
+        --seed  7 \
+        --out   /tmp/wt_scene.rrd
 
-The scene model (``r69e_v2_evermotion_ithappy_504``) was trained on
-full-frame indoor renders.  By default this script treats the whole
-image as foreground (no center-crop, no auto-matting); the released
-scene model was trained on indoor renders without sky, so for outdoor
-images with large sky regions you should pre-mask the sky externally
-(any matting / segmentation tool of your choice).
+Hand-picked scene samples live under ``examples/test_images/scene/`` --
+see ``examples/test_images/README.md``.
+
+The scene model (``r69e``) was trained on full-frame indoor renders.
+By default this script treats the whole image as foreground (no
+center-crop, no auto-matting); the released scene model was trained on
+indoor renders without sky, so for outdoor images with large sky regions
+you should pre-mask the sky externally (any matting / segmentation tool
+of your choice).
 """
 
 from __future__ import annotations
@@ -31,12 +39,13 @@ import torch
 
 from wt import inference_diffusion, solve_intrinsics_from_xyz
 from wt.checkpoint import build_model_and_load_ckpt
-from wt.cli import parse_bg_color
+from wt.cli import parse_bg_color, resolve_seeds
 from wt.data import load_rgba_image, preprocess_rgba_for_model
 from wt.inference import _bypass_activation_checkpointing
 from wt.viz import (
     init_recording,
     init_recording_layer_timeline,
+    log_multiseed_prediction,
     log_prediction,
     log_prediction_layer_timeline,
     save_rrd,
@@ -65,7 +74,27 @@ def main():
     p.add_argument(
         "--out", type=Path, default=Path("infer_scene.rrd"), help="Output .rrd"
     )
-    p.add_argument("--seed", type=int, default=42)
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help=(
+            "Run a single deterministic seed.  When neither ``--seed`` nor "
+            "``--num-seeds`` is set, the script runs 4 seeds (``0, 1, 2, "
+            "3``) so you can compare diffusion samples side-by-side and "
+            "pick the best."
+        ),
+    )
+    p.add_argument(
+        "--num-seeds",
+        type=int,
+        default=None,
+        help=(
+            "Number of independent diffusion seeds (default: 4 when "
+            "neither ``--seed`` nor ``--num-seeds`` is set).  Pass "
+            "``--num-seeds 1`` for the fastest single-sample mode."
+        ),
+    )
     p.add_argument(
         "--alpha-erode",
         type=int,
@@ -104,13 +133,25 @@ def main():
         action="store_true",
         help=(
             "Log the prediction along a ``layer`` timeline so the viewer can "
-            "scrub through the layers one at a time."
+            "scrub through the layers one at a time.  Requires single-seed "
+            "mode (combine with ``--seed N`` or ``--num-seeds 1``)."
         ),
     )
     args = p.parse_args()
 
+    seeds = resolve_seeds(args)
+    if args.layer_timeline and len(seeds) > 1:
+        raise SystemExit(
+            "--layer-timeline is incompatible with the default multi-seed "
+            "sweep.  Pass --seed N (or --num-seeds 1) for a single-seed "
+            "layer-timeline visualisation."
+        )
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"[wt] config={args.config}, device={device}")
+    print(
+        f"[wt] config={args.config}, device={device}, "
+        f"seeds={seeds} ({len(seeds)} sample{'s' if len(seeds) > 1 else ''})"
+    )
 
     model, cfg = build_model_and_load_ckpt(args.config, args.ckpt, device)
 
@@ -130,59 +171,75 @@ def main():
     rgb_t = rgb_t.to(device)
     mask_t = mask_t.to(device)
     intr_t = intr_t.to(device)
-    torch.manual_seed(args.seed)
-    if device.type == "cuda":
-        torch.cuda.manual_seed(args.seed)
 
-    print("[wt] running diffusion sampling ...")
     autocast_ctx = (
         torch.autocast(device_type="cuda", dtype=torch.bfloat16)
         if device.type == "cuda"
         else torch.autocast(device_type="cpu", enabled=False)
     )
-    with torch.no_grad(), autocast_ctx, _bypass_activation_checkpointing(model):
-        xyz_pred, mask_pred, _ = inference_diffusion(
-            model,
-            rgb_t,
-            gt_mask=mask_t,
-            use_gt_mask=True,
-            intrinsics=intr_t,
-            invalid_fill_mode="noise",
-            **cfg["inference_kwargs"],
-        )
 
-    xyz_np = xyz_pred[0].float().cpu().numpy()
-    mask_np = mask_pred[0].cpu().numpy().astype(bool)
+    seeds_xyz: list[np.ndarray] = []
+    seeds_mask: list[np.ndarray] = []
+    for seed in seeds:
+        torch.manual_seed(seed)
+        if device.type == "cuda":
+            torch.cuda.manual_seed(seed)
+        print(f"[wt] running diffusion (seed={seed}) ...")
+        with torch.no_grad(), autocast_ctx, _bypass_activation_checkpointing(model):
+            xyz_pred, mask_pred, _ = inference_diffusion(
+                model,
+                rgb_t,
+                gt_mask=mask_t,
+                use_gt_mask=True,
+                intrinsics=intr_t,
+                invalid_fill_mode="noise",
+                **cfg["inference_kwargs"],
+            )
+        seeds_xyz.append(xyz_pred[0].float().cpu().numpy())
+        seeds_mask.append(mask_pred[0].cpu().numpy().astype(bool))
 
     K_solved, fov_x = solve_intrinsics_from_xyz(
-        xyz_np[0], mask_np[0], image_size=cfg["image_size"]
+        seeds_xyz[0][0], seeds_mask[0][0], image_size=cfg["image_size"]
     )
-    print(f"[wt] solved K from layer-0 XYZ; fov_x ≈ {fov_x:.1f}°")
+    print(f"[wt] solved K from seed-0/layer-0 XYZ; fov_x ≈ {fov_x:.1f}°")
     K_for_viz = K_solved if K_solved is not None else intr_t[0].cpu().numpy()
 
     rgb_for_viz = (rgb_t[0].permute(1, 2, 0).cpu().numpy() * 255.0).astype(np.uint8)
-    if args.layer_timeline:
-        rec = init_recording_layer_timeline(
-            application_id=f"wt.{args.config}.scene.layers"
-        )
-        log_prediction_layer_timeline(
-            rgb_uint8=rgb_for_viz,
-            xyz=xyz_np,
-            mask=mask_np,
-            intrinsics=K_for_viz,
-            name=args.image.name,
-            recording=rec,
-        )
+    if len(seeds) == 1:
+        if args.layer_timeline:
+            rec = init_recording_layer_timeline(
+                application_id=f"wt.{args.config}.scene.layers"
+            )
+            log_prediction_layer_timeline(
+                rgb_uint8=rgb_for_viz,
+                xyz=seeds_xyz[0],
+                mask=seeds_mask[0],
+                intrinsics=K_for_viz,
+                name=args.image.name,
+                recording=rec,
+            )
+        else:
+            rec = init_recording(application_id=f"wt.{args.config}.scene")
+            log_prediction(
+                rgb_uint8=rgb_for_viz,
+                xyz=seeds_xyz[0],
+                mask=seeds_mask[0],
+                intrinsics=K_for_viz,
+                name=args.image.name,
+                recording=rec,
+            )
     else:
-        rec = init_recording(application_id=f"wt.{args.config}.scene")
-        log_prediction(
+        rec = init_recording(application_id=f"wt.{args.config}.scene.multiseed")
+        log_multiseed_prediction(
             rgb_uint8=rgb_for_viz,
-            xyz=xyz_np,
-            mask=mask_np,
+            seeds_xyz=seeds_xyz,
+            seeds_mask=seeds_mask,
+            seed_values=seeds,
             intrinsics=K_for_viz,
             name=args.image.name,
             recording=rec,
         )
+
     rrd_path = save_rrd(rec, args.out)
     print(f"[wt] wrote {rrd_path}")
     print(f"     view with: rerun {rrd_path}")

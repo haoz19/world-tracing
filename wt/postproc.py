@@ -1,4 +1,4 @@
-"""Post-processing for predicted multilayer depth.
+"""Post-processing for predicted multilayer geometry.
 
 Per-layer presets
 -----------------

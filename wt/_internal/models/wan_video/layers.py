@@ -2,7 +2,7 @@
 
 The original module is ~600 lines and pulls in flash-attention, kv-caching,
 pytree, and various Wan2.1 utilities that are only relevant for the Wan
-video model itself.  Our multilayer-depth model only uses two helpers:
+video model itself.  Our multilayer-geometry model only uses two helpers:
 
 * :func:`wan_init_linear` -- linear weight init following Wan2.1
 * :func:`sinusoidal_embedding_1d` -- 1D sinusoidal positional embedding for

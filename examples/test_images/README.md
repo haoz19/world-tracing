@@ -4,19 +4,15 @@ This directory hosts the **exact** input samples we hand-picked for the
 project's demo video (Object / Scene / Dynamic). They are the same images
 used to produce the final pair-comparison clips in our paper-demo viewer.
 
-| Category | Total | Featured | More | Source |
-| --- | ---: | ---: | ---: | --- |
-| `object/`  | 30 | 12 | 18 | Generated RGBA assets (1376×768, RGBA PNG) |
-| `scene/`   | 20 |  4 | 16 | r69e training-set scenes (504×504, RGBA PNG, alpha=255) |
-| `dynamic/` | 35 |  8 | 27 | 16-frame clips evenly subsampled from DAVIS / Consistent4D / human-dynamic |
+| Category | Source |
+| --- | --- |
+| `object/`  | Generated RGBA assets (1376×768, RGBA PNG) |
+| `scene/`   | r69e training-set scenes (504×504, RGBA PNG, alpha=255) |
+| `dynamic/` | 16-frame clips evenly subsampled from DAVIS / Consistent4D / human-dynamic |
 
-Total disk footprint: ~350 MB (dynamic accounts for ~320 MB).
-
-**Featured** entries are the ones promoted as the "tier-1" examples in
-the demo video — they are the most visually impressive and the safest
-defaults for benchmarking. **More** entries are additional curated
-samples that round out the variety of object types, scene styles, and
-dynamic motion (chosen for diversity, not difficulty).
+Each category mixes a small "tier-1" set of visually striking examples
+with additional curated samples that round out the variety of object
+types, scene styles, and dynamic motion.
 
 ## Layout
 

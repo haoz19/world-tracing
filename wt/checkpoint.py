@@ -4,7 +4,7 @@ The release ships three model configs:
 
 * ``r75b`` -- :class:`MultilayerXYZModel` for static objects (1.7B params,
   ``image_size=504``).
-* ``r69e`` -- multilayer-depth scene model (1.5B params, ``image_size=504``).
+* ``r69e`` -- multilayer-geometry scene model (1.5B params, ``image_size=504``).
 * ``r76``  -- dynamic-object video model with temporal attention (2.1B
   params, ``image_size=336``).
 

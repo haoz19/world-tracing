@@ -1,5 +1,5 @@
 {
-  "generated_by": "multilayer_depth_release_inference/_collect_demo_samples.py",
+  "generated_by": "multilayer_geometry_release_inference/_collect_demo_samples.py",
   "num_frames_per_dynamic": 16,
   "object": [
     {

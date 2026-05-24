@@ -229,7 +229,7 @@ def inference_diffusion(
     depth_only: bool = False,
     invalid_fill_mode: str | None = None,
 ) -> tuple[torch.Tensor | None, torch.Tensor, torch.Tensor | None]:
-    """Run multilayer-depth diffusion sampling on a single RGB image.
+    """Run multilayer-geometry diffusion sampling on a single RGB image.
 
     Args:
         model: a ``MultilayerXYZModel``.

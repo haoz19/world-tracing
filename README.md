@@ -1,17 +1,17 @@
-# World Tracing (`wt`) — Multilayer-Depth Diffusion
+# World Tracing (`wt`) — Multilayer-Geometry Diffusion
 
 Image-to-3D point cloud prediction via flow-matching diffusion over **layered
-depth**.  A single forward pass produces ``L`` registered depth maps that
+geometry**.  A single forward pass produces ``L`` registered XYZ maps that
 together cover the visible surface *and* the (partially) occluded surfaces
 behind it, giving a richer 3D scaffold than a single mono-depth map.
 
 > **Project page (live demos):**
 > [https://haoz19.github.io/world-tracing-page/](https://haoz19.github.io/world-tracing-page/)
 >
-> The project page hosts the same 37 curated samples (10 objects + 8 scenes
-> + 19 dynamic clips) as an interactive 3D viewer.  This repository ships
-> the **code** that produced those samples plus the public model weights so
-> you can reproduce them on any RGBA-friendly image of your own.
+> The project page hosts the curated demo samples as an interactive 3D
+> viewer.  This repository ships the **code** that produced those samples
+> plus the public model weights so you can reproduce them on any
+> RGBA-friendly image of your own.
 
 This is the inference-only release.
 
@@ -54,18 +54,23 @@ pip install -e ".[viz,textured-mesh]"  # + helpers for image → textured GLB (s
 
 The `bg` extra pulls in
 [`ZhengPeng7/BiRefNet_HR`](https://huggingface.co/ZhengPeng7/BiRefNet_HR)
-(MIT, SOTA dichotomous segmentation) so that `infer_rgba.py` /
-`infer_multiseed.py` can auto-matte RGB inputs that don't already carry
-an alpha channel.  Without this extra they fall back to a fast
-near-white-background heuristic and a warning.
+(MIT, SOTA dichotomous segmentation) so that `infer_rgba.py` can
+auto-matte RGB inputs that don't already carry an alpha channel.
+Without this extra it falls back to a fast near-white-background
+heuristic and a warning.
 
 ## Quickstart
 
-> The 30 + 20 + 41 sample images we used for the demo video live in
-> [`examples/test_images/`](examples/test_images/) -- 30 objects, 20
-> scenes, and 41 dynamic clips (16 frames each).  All quickstart commands
-> below use the same set so you can reproduce a demo on a fresh checkout
+> The sample images we used for the demo video live in
+> [`examples/test_images/`](examples/test_images/) -- pre-organised by
+> mode (`object/`, `scene/`, `dynamic/`).  All quickstart commands below
+> use the same set so you can reproduce a demo on a fresh checkout
 > without finding your own inputs.
+>
+> Every example below runs a 4-seed sweep by default (seeds ``0, 1, 2,
+> 3``) and writes one ``.rrd`` with the four samples laid out side-by-side
+> along ``+X`` so you can pick the best.  Pass ``--seed N`` to run a
+> single deterministic seed instead.
 
 ### 1. Single RGBA / RGB object image (`r75b`)
 
@@ -122,23 +127,27 @@ a single crop so the temporal-attention blocks can establish per-pixel
 correspondences.  Pass ``--frame_indices "0,2,4,6,8,10,12,14"`` to pick
 a subset of the 16 supplied frames.
 
-### 4. Multi-seed sampling
+### 4. Choosing a different seed
+
+The default 4-seed sweep emits all four samples in a single ``.rrd``,
+spread along ``+X``.  To run a single deterministic seed, pass
+``--seed``:
 
 ```bash
-python examples/infer_multiseed.py \
-    --image      examples/test_images/object/obj063_trex_dinosaur.png \
-    --num_seeds  4 \
-    --ckpt       r75b \
-    --config     r75b
+python examples/infer_rgba.py \
+    --image  examples/test_images/object/obj063_trex_dinosaur.png \
+    --ckpt   r75b \
+    --seed   7 \
+    --out    /tmp/wt_obj063_seed7.rrd
 ```
 
-Four independent denoising trajectories of the same image, laid out
-side-by-side along ``+X`` so you can compare the variation in occluded
-layers.
+``--num-seeds K`` runs a custom sweep size (combine with ``--seed N`` to
+shift the base seed: ``--seed 100 --num-seeds 4`` runs ``100, 101, 102,
+103``).  ``--num-seeds 1`` is the fastest single-sample mode.
 
 ### 5. Textured mesh export (image → GLB)
 
-Chains the released multilayer-depth model with the public
+Chains the released multilayer-geometry model with the public
 [TRELLIS.2](https://github.com/microsoft/TRELLIS.2) image-to-3D
 pipeline: we **skip** TRELLIS.2's Stage-1 sparse-structure diffusion
 and feed it the voxel coords derived from our predicted XYZ.  Stages 2
@@ -156,7 +165,7 @@ conda activate trellis2
 # 2. install wt in that same env
 pip install -e /path/to/world-tracing[viz,textured-mesh]
 
-# 3. run end-to-end
+# 3. run end-to-end (default 4-seed sweep -- writes obj014_seed{0,1,2,3}.glb)
 python examples/infer_textured_mesh.py \
     --image  examples/test_images/object/obj014_leather_briefcase.png \
     --ckpt   r75b \
@@ -167,8 +176,11 @@ python examples/infer_textured_mesh.py \
 
 The `--pipeline-type` flag selects the TRELLIS.2 stage configuration
 (`1024_cascade` is the default — best quality / time trade-off).
-Outputs land at the path you pass to `--out`; pass `--rrd` to additionally
-dump the multilayer point cloud for sanity-check viewing in Rerun.
+By default a 4-seed sweep writes ``<out_stem>_seed{0,1,2,3}.glb`` so you
+can keep the best mesh; pass ``--seed N`` (or ``--num-seeds 1``) to run
+a single seed and write to the plain ``--out`` path.  ``--rrd``
+additionally dumps the multilayer point cloud for sanity-check viewing
+in Rerun.
 
 ## Checkpoint handling
 
@@ -240,11 +252,10 @@ wt/                       ← installable Python package
 └── _internal/            ← Vendored deps (Wan2.1 layer init, MoGe backbone, VGGT layer scale, ...)
 
 examples/
-├── infer_rgba.py         ← Single RGBA image (object model)
-├── infer_scene.py        ← Single scene RGB (r69e)
-├── infer_video.py        ← Dynamic clip (r76)
-├── infer_multiseed.py    ← N seeds on one image
-└── infer_textured_mesh.py ← Image → MLD → TRELLIS.2 stages 2+3 → textured GLB
+├── infer_rgba.py         ← Single RGBA image (object model; 4-seed sweep by default)
+├── infer_scene.py        ← Single scene RGB (r69e; 4-seed sweep by default)
+├── infer_video.py        ← Dynamic clip (r76; 4-seed sweep by default)
+└── infer_textured_mesh.py ← Image → multilayer geometry → TRELLIS.2 stages 2+3 → textured GLB (4-seed sweep by default)
 ```
 
 ## Hardware
@@ -257,8 +268,9 @@ Tested on a single NVIDIA A100 / H100 (80 GB) with bfloat16 autocast.
 | `r69e`  | 504 × 504           | ~12 s / image |
 | `r76`   | 336 × 336 × 8 frames | ~30 s / clip  |
 
-Multi-seed is N× longer (it runs N independent samplings).  Smaller GPUs
-work with reduced ``--num-steps`` or by sampling at a smaller resolution.
+The default 4-seed sweep is therefore ~4× the single-seed numbers above.
+Smaller GPUs work with reduced ``--num-steps`` or by sampling at a
+smaller resolution.
 
 ## Roadmap
 

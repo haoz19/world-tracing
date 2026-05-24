@@ -10,6 +10,32 @@ import argparse
 from pathlib import Path
 
 
+def resolve_seeds(args: argparse.Namespace) -> list[int]:
+    """Translate ``args.seed`` / ``args.num_seeds`` into a concrete seed list.
+
+    Semantics:
+
+    * Neither flag set -> ``[0, 1, 2, 3]`` (the default 4-seed sweep).
+    * ``--seed N`` only -> ``[N]`` (single deterministic sample).
+    * ``--num-seeds K`` only -> ``[0, 1, ..., K-1]``.
+    * Both ``--seed N`` and ``--num-seeds K`` -> ``[N, N+1, ..., N+K-1]``.
+
+    Use this helper in every example script that drives ``inference_diffusion``
+    so the multi-seed UX stays consistent across object / scene / video /
+    textured-mesh pipelines.
+    """
+    seed = getattr(args, "seed", None)
+    num_seeds = getattr(args, "num_seeds", None)
+    if seed is None and num_seeds is None:
+        return [0, 1, 2, 3]
+    if num_seeds is None:
+        return [int(seed)]
+    if num_seeds < 1:
+        raise SystemExit("--num-seeds must be >= 1")
+    base = int(seed) if seed is not None else 0
+    return [base + i for i in range(int(num_seeds))]
+
+
 def parse_bg_color(raw: str) -> tuple[int, int, int] | None:
     """Parse ``--bg-color`` value.
 
@@ -63,7 +89,31 @@ def add_common_args(p: argparse.ArgumentParser, default_out: str) -> None:
         default=Path(default_out),
         help="Output .rrd file",
     )
-    p.add_argument("--seed", type=int, default=42)
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help=(
+            "Run a single deterministic seed.  Mutually exclusive with the "
+            "default multi-seed behaviour: when neither ``--seed`` nor "
+            "``--num-seeds`` is set, the script runs ``--num-seeds 4`` "
+            "(seeds ``0, 1, 2, 3``) so you can eyeball the four "
+            "diffusion samples side-by-side and pick the best.  "
+            "Combine with ``--num-seeds K`` to run ``K`` seeds starting "
+            "at the given ``--seed`` value."
+        ),
+    )
+    p.add_argument(
+        "--num-seeds",
+        type=int,
+        default=None,
+        help=(
+            "Number of independent diffusion seeds to sample (default "
+            "behaviour: 4 when neither ``--seed`` nor ``--num-seeds`` is "
+            "specified).  Pass ``--num-seeds 1`` for the fastest "
+            "single-sample mode."
+        ),
+    )
     p.add_argument(
         "--alpha-erode",
         type=int,

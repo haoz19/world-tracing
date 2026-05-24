@@ -331,7 +331,8 @@ def save_rrd(recording, path: str | os.PathLike) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Multi-seed logging (used by examples/infer_multiseed.py)
+# Multi-seed logging (used by examples/infer_rgba.py / infer_scene.py /
+# infer_video.py when running the default 4-seed sweep).
 # ---------------------------------------------------------------------------
 
 
