@@ -13,8 +13,7 @@ behind it, giving a richer 3D scaffold than a single mono-depth map.
 > the **code** that produced those samples plus the public model weights so
 > you can reproduce them on any RGBA-friendly image of your own.
 
-This is the inference-only release.  Training code, dataset preparation,
-and evaluation utilities will follow.
+This is the inference-only release.
 
 ## Released checkpoints
 
@@ -234,8 +233,6 @@ work with reduced ``--num-steps`` or by sampling at a smaller resolution.
   stage 2 + 3 → GLB" pipeline that produces a clean textured mesh from a
   single image.  Will be added as `examples/infer_textured_mesh.py` once
   the public TRELLIS.2 integration is stabilised.
-* **Training code.**  Currently only inference is open-sourced.  Training
-  scripts and dataset preparation tooling will follow.
 * **More published checkpoints.**  Updated `r75b` / `r69e` / `r76` from
   later training rounds, and a single-image multi-view variant.
 
