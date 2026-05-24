@@ -1,7 +1,10 @@
 <div align="center">
 
 <a href="https://www.worldlabs.ai/" target="_blank">
-  <img src="assets/worldlabs_logo.png" alt="World Labs" width="84">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/worldlabs_logo_for_dark.png">
+    <img src="assets/worldlabs_logo_for_light.png" alt="World Labs" width="84">
+  </picture>
 </a>
 
 # World Tracing: Generative Pixel-Aligned Geometry Beyond the Visible
