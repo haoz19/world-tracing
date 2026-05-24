@@ -34,16 +34,14 @@
 </div>
 
 <p align="center">
-  <video src="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4"
-         poster="assets/world_tracing_demo_poster.jpg"
-         controls muted autoplay loop playsinline
+  <a href="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4">
+    <img src="assets/world_tracing_demo_poster.jpg"
+         alt="Demo video — click to play (1440p, 79 MB)"
          width="100%">
-    Your browser does not support the video tag.
-    Watch the demo at
-    <a href="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4">
-      hero_demo_v3_1440p.mp4
-    </a>.
-  </video>
+  </a>
+  <br>
+  <sub><i>Click the image above to watch the 1440p demo reel (79 MB). Also available on the
+  <a href="https://haoz19.github.io/world-tracing-page/">project page</a>.</i></sub>
 </p>
 
 ---
