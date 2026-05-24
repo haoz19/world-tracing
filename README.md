@@ -162,13 +162,16 @@ runs are instant.
 
 ## What you get back
 
-`inference_diffusion` returns three tensors:
+The released models predict **per-layer geometry only**:
 
 | name | shape | meaning |
 | --- | --- | --- |
 | `xyz_pred` | ``[B, L, H, W, 3]`` | Per-layer XYZ in camera space (metric units for `r75b` / `r76`; relative scale for `r69e` median-log) |
-| `mask_pred` | ``[B, L, H, W]`` | Per-layer valid-pixel mask, AND-accumulated across L |
-| `rgb_pred` | ``None`` | Reserved for joint colour prediction (disabled in released configs) |
+
+The per-layer validity mask is taken from the input alpha (the model's
+output is unmasked geometry over the full grid); per-pixel colour is
+sampled from the input RGB at the corresponding location.  No colour
+or visibility is predicted by the model.
 
 Camera intrinsics for the predicted point cloud can be recovered from
 layer-0 with [`wt.solve_intrinsics_from_xyz`](wt/intrinsics.py); this lets
