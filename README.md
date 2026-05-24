@@ -37,6 +37,19 @@
 
 </div>
 
+<p align="center">
+  <video src="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4"
+         poster="assets/world_tracing_demo_poster.jpg"
+         controls muted autoplay loop playsinline
+         width="100%">
+    Your browser does not support the video tag.
+    Watch the demo at
+    <a href="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4">
+      hero_demo_v3_1440p.mp4
+    </a>.
+  </video>
+</p>
+
 ---
 
 Image-to-3D point cloud prediction via flow-matching diffusion over **layered
