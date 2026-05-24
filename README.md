@@ -34,13 +34,14 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/haoz19/world-tracing-page/releases/download/v1/hero_demo_v3_1440p.mp4">
+  <a href="https://cdn.jsdelivr.net/gh/haoz19/world-tracing-page@assets/videos/world_tracing_demo_720p.mp4">
     <img src="assets/world_tracing_demo_poster.jpg"
-         alt="Demo video — click to play (1440p, 79 MB)"
+         alt="Demo video — click to play (720p, ~11 MB)"
          width="100%">
   </a>
   <br>
-  <sub><i>Click the image above to watch the 1440p demo reel (79 MB). Also available on the
+  <sub><i>Click the image above to play the demo reel inline (720p, ~11 MB).
+  Full 1440p / interactive version on the
   <a href="https://haoz19.github.io/world-tracing-page/">project page</a>.</i></sub>
 </p>
 
