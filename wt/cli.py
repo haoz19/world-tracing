@@ -10,14 +10,18 @@ import argparse
 from pathlib import Path
 
 
+DEFAULT_SWEEP_BASE_SEED = 42
+DEFAULT_SWEEP_SIZE = 4
+
+
 def resolve_seeds(args: argparse.Namespace) -> list[int]:
     """Translate ``args.seed`` / ``args.num_seeds`` into a concrete seed list.
 
     Semantics:
 
-    * Neither flag set -> ``[0, 1, 2, 3]`` (the default 4-seed sweep).
+    * Neither flag set -> ``[42, 43, 44, 45]`` (the default 4-seed sweep).
     * ``--seed N`` only -> ``[N]`` (single deterministic sample).
-    * ``--num-seeds K`` only -> ``[0, 1, ..., K-1]``.
+    * ``--num-seeds K`` only -> ``[42, 43, ..., 42 + K - 1]``.
     * Both ``--seed N`` and ``--num-seeds K`` -> ``[N, N+1, ..., N+K-1]``.
 
     Use this helper in every example script that drives ``inference_diffusion``
@@ -27,12 +31,14 @@ def resolve_seeds(args: argparse.Namespace) -> list[int]:
     seed = getattr(args, "seed", None)
     num_seeds = getattr(args, "num_seeds", None)
     if seed is None and num_seeds is None:
-        return [0, 1, 2, 3]
+        return [
+            DEFAULT_SWEEP_BASE_SEED + i for i in range(DEFAULT_SWEEP_SIZE)
+        ]
     if num_seeds is None:
         return [int(seed)]
     if num_seeds < 1:
         raise SystemExit("--num-seeds must be >= 1")
-    base = int(seed) if seed is not None else 0
+    base = int(seed) if seed is not None else DEFAULT_SWEEP_BASE_SEED
     return [base + i for i in range(int(num_seeds))]
 
 
@@ -97,7 +103,7 @@ def add_common_args(p: argparse.ArgumentParser, default_out: str) -> None:
             "Run a single deterministic seed.  Mutually exclusive with the "
             "default multi-seed behaviour: when neither ``--seed`` nor "
             "``--num-seeds`` is set, the script runs ``--num-seeds 4`` "
-            "(seeds ``0, 1, 2, 3``) so you can eyeball the four "
+            "(seeds ``42, 43, 44, 45``) so you can eyeball the four "
             "diffusion samples side-by-side and pick the best.  "
             "Combine with ``--num-seeds K`` to run ``K`` seeds starting "
             "at the given ``--seed`` value."

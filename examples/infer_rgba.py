@@ -5,7 +5,7 @@ Usage
 
 .. code-block:: bash
 
-    # default: 4-seed sweep (seeds 0,1,2,3), spread along +X in one .rrd
+    # default: 4-seed sweep (seeds 42,43,44,45), spread along +X in one .rrd
     python examples/infer_rgba.py \
         --image examples/test_images/object/obj014_leather_briefcase.png \
         --ckpt  hf://haoz19/object-model-6layer \

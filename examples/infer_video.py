@@ -5,7 +5,7 @@ Usage
 
 .. code-block:: bash
 
-    # default: 4-seed sweep (seeds 0,1,2,3), spread along +X in one .rrd
+    # default: 4-seed sweep (seeds 42,43,44,45), spread along +X in one .rrd
     python examples/infer_video.py \
         --image_dir examples/test_images/dynamic/davis__camel/ \
         --ckpt     hf://haoz19/dynamic-model-16frame \

@@ -5,7 +5,7 @@ Usage
 
 .. code-block:: bash
 
-    # default: 4-seed sweep (seeds 0,1,2,3), spread along +X in one .rrd
+    # default: 4-seed sweep (seeds 42,43,44,45), spread along +X in one .rrd
     python examples/infer_scene.py \
         --image examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png \
         --ckpt  hf://haoz19/scene-model-6layer \
@@ -80,9 +80,9 @@ def main():
         default=None,
         help=(
             "Run a single deterministic seed.  When neither ``--seed`` nor "
-            "``--num-seeds`` is set, the script runs 4 seeds (``0, 1, 2, "
-            "3``) so you can compare diffusion samples side-by-side and "
-            "pick the best."
+            "``--num-seeds`` is set, the script runs 4 seeds (``42, 43, "
+            "44, 45``) so you can compare diffusion samples side-by-side "
+            "and pick the best."
         ),
     )
     p.add_argument(

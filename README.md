@@ -97,10 +97,10 @@ heuristic and a warning.
 > use the same set so you can reproduce a demo on a fresh checkout
 > without finding your own inputs.
 >
-> Every example below runs a 4-seed sweep by default (seeds ``0, 1, 2,
-> 3``) and writes one ``.rrd`` with the four samples laid out side-by-side
-> along ``+X`` so you can pick the best.  Pass ``--seed N`` to run a
-> single deterministic seed instead.
+> Every example below runs a 4-seed sweep by default (seeds ``42, 43,
+> 44, 45``) and writes one ``.rrd`` with the four samples laid out
+> side-by-side along ``+X`` so you can pick the best.  Pass ``--seed N``
+> to run a single deterministic seed instead.
 
 ### 1. Single RGBA / RGB object image (`r75b`)
 
@@ -171,9 +171,10 @@ python examples/infer_rgba.py \
     --out    /tmp/wt_obj063_seed7.rrd
 ```
 
-``--num-seeds K`` runs a custom sweep size (combine with ``--seed N`` to
-shift the base seed: ``--seed 100 --num-seeds 4`` runs ``100, 101, 102,
-103``).  ``--num-seeds 1`` is the fastest single-sample mode.
+``--num-seeds K`` runs a custom sweep size starting at the default
+base seed 42 (combine with ``--seed N`` to shift the base: ``--seed 100
+--num-seeds 4`` runs ``100, 101, 102, 103``).  ``--num-seeds 1`` is the
+fastest single-sample mode.
 
 ### 5. Textured mesh export (image → GLB)
 
@@ -195,7 +196,7 @@ conda activate trellis2
 # 2. install wt in that same env
 pip install -e /path/to/world-tracing[viz,textured-mesh]
 
-# 3. run end-to-end (default 4-seed sweep -- writes obj014_seed{0,1,2,3}.glb)
+# 3. run end-to-end (default 4-seed sweep -- writes obj014_seed{42,43,44,45}.glb)
 python examples/infer_textured_mesh.py \
     --image  examples/test_images/object/obj014_leather_briefcase.png \
     --ckpt   r75b \
@@ -206,9 +207,9 @@ python examples/infer_textured_mesh.py \
 
 The `--pipeline-type` flag selects the TRELLIS.2 stage configuration
 (`1024_cascade` is the default — best quality / time trade-off).
-By default a 4-seed sweep writes ``<out_stem>_seed{0,1,2,3}.glb`` so you
-can keep the best mesh; pass ``--seed N`` (or ``--num-seeds 1``) to run
-a single seed and write to the plain ``--out`` path.  ``--rrd``
+By default a 4-seed sweep writes ``<out_stem>_seed{42,43,44,45}.glb`` so
+you can keep the best mesh; pass ``--seed N`` (or ``--num-seeds 1``) to
+run a single seed and write to the plain ``--out`` path.  ``--rrd``
 additionally dumps the multilayer point cloud for sanity-check viewing
 in Rerun.
 

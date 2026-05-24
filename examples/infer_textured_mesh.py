@@ -28,8 +28,8 @@ Usage
         --out    /tmp/wt_textured.glb \\
         --trellis2-path /path/to/TRELLIS.2
 
-The default 4-seed sweep writes ``/tmp/wt_textured_seed{0,1,2,3}.glb`` so
-you can compare meshes and keep the best one.  Pass ``--seed N`` (or
+The default 4-seed sweep writes ``/tmp/wt_textured_seed{42,43,44,45}.glb``
+so you can compare meshes and keep the best one.  Pass ``--seed N`` (or
 ``--num-seeds 1``) to run a single deterministic seed and write to the
 plain ``--out`` path instead.
 
