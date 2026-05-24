@@ -1,17 +1,44 @@
-# World Tracing (`wt`) — Multilayer-Geometry Diffusion
+<div align="center">
+
+<a href="https://www.worldlabs.ai/" target="_blank">
+  <img src="assets/worldlabs_logo.png" alt="World Labs" width="84">
+</a>
+
+# World Tracing: Generative Pixel-Aligned Geometry Beyond the Visible
+
+### Multilayer-Geometry Diffusion (`wt`)
+
+<a href="https://haoz19.github.io/">Hao Zhang</a><sup>1,2</sup> &nbsp;·&nbsp;
+<a href="https://mbanani.github.io/">Mohamed El Banani</a><sup>1</sup> &nbsp;·&nbsp;
+<a href="https://jen-haocheng.com/">Jen-Hao Cheng</a><sup>1</sup> &nbsp;·&nbsp;
+<a href="https://people.csail.mit.edu/pzpzpzp1/">Paul Zhang</a><sup>1</sup> <br>
+<a href="https://hawaiii.github.io/">Yi Hua</a><sup>1</sup> &nbsp;·&nbsp;
+<a href="https://bmild.github.io/">Ben Mildenhall</a><sup>1</sup> &nbsp;·&nbsp;
+<a href="https://christophlassner.de/">Christoph Lassner</a><sup>1</sup> &nbsp;·&nbsp;
+<a href="https://vision.ai.illinois.edu/narendra-ahuja/">Narendra Ahuja</a><sup>2</sup> &nbsp;·&nbsp;
+<a href="https://gengshan-y.github.io/">Gengshan Yang</a><sup>1</sup>
+
+<sup>1</sup>World Labs &nbsp; &nbsp; <sup>2</sup>University of Illinois Urbana-Champaign
+
+[Project page](https://haoz19.github.io/world-tracing-page/) &nbsp;·&nbsp;
+[Object model](https://huggingface.co/haoz19/object-model-6layer) &nbsp;·&nbsp;
+[Scene model](https://huggingface.co/haoz19/scene-model-6layer) &nbsp;·&nbsp;
+[Dynamic model](https://huggingface.co/haoz19/dynamic-model-16frame)
+
+</div>
+
+---
 
 Image-to-3D point cloud prediction via flow-matching diffusion over **layered
 geometry**.  A single forward pass produces ``L`` registered XYZ maps that
 together cover the visible surface *and* the (partially) occluded surfaces
 behind it, giving a richer 3D scaffold than a single mono-depth map.
 
-> **Project page (live demos):**
-> [https://haoz19.github.io/world-tracing-page/](https://haoz19.github.io/world-tracing-page/)
->
-> The project page hosts the curated demo samples as an interactive 3D
-> viewer.  This repository ships the **code** that produced those samples
-> plus the public model weights so you can reproduce them on any
-> RGBA-friendly image of your own.
+> The [project page](https://haoz19.github.io/world-tracing-page/) hosts
+> the curated demo samples as an interactive 3D viewer.  This repository
+> ships the **code** that produced those samples plus the public model
+> weights so you can reproduce them on any RGBA-friendly image of your
+> own.
 
 This is the inference-only release.
 
