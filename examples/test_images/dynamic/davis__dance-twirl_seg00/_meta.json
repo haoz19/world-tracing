@@ -1,0 +1,27 @@
+{
+  "stem": "davis__dance-twirl_seg00",
+  "source_clip": "davis/dance-twirl",
+  "source_total_frames": 90,
+  "source_fps": 24,
+  "step": 2,
+  "n_frames": 16,
+  "src_indices": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30
+  ],
+  "real_time_span_s": 1.25
+}

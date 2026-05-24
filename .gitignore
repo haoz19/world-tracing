@@ -1,0 +1,45 @@
+# Byte-compiled / optimised
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# Local dev environments
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+
+# Testing / linting / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+.cache/
+.tox/
+
+# Editor backups
+*~
+.*.sw[op]
+
+# Outputs
+/tmp/
+*.rrd
+*.glb
+*.ply
+*.npz
+*.pt
+*.pth
+*.safetensors
+
+# OS
+.DS_Store
+Thumbs.db

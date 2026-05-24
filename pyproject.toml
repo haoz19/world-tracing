@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wt"
+version = "0.1.0"
+description = "World Tracing — multilayer-depth diffusion for image / scene / dynamic-clip 3D point clouds."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Hao Zhang" },
+    { name = "World Labs" },
+]
+keywords = [
+    "3d",
+    "computer-vision",
+    "point-cloud",
+    "diffusion",
+    "depth-estimation",
+    "multilayer-depth",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "torch>=2.2",
+    "Pillow>=10.0",
+    "opencv-python>=4.8",
+    "einops>=0.7",
+    "safetensors>=0.4",
+    "huggingface_hub>=0.20",
+    "structlog>=24.1",
+    "beartype>=0.18",
+    "jaxtyping>=0.2.30",
+]
+
+[project.optional-dependencies]
+viz = [
+    "rerun-sdk>=0.22,<0.23",
+    "scipy>=1.11",
+]
+sky = [
+    "transformers>=4.40",
+]
+flash = [
+    "flash-attn>=2.5",
+]
+dev = [
+    "ruff>=0.4",
+    "pytest>=7",
+    "build>=1.0",
+]
+
+[project.urls]
+Homepage = "https://haoz19.github.io/world-tracing-page/"
+Repository = "https://github.com/haoz19/world-tracing"
+Issues = "https://github.com/haoz19/world-tracing/issues"
+
+[tool.setuptools.packages.find]
+include = ["wt*"]
+exclude = ["examples*", "tests*"]
+
+[tool.setuptools.package-data]
+"wt" = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["wt/_internal/vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E741"]
