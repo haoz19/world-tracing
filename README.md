@@ -216,7 +216,7 @@ or visibility is predicted by the model.
 Camera intrinsics for the predicted point cloud can be recovered from
 layer-0 with [`wt.solve_intrinsics_from_xyz`](wt/intrinsics.py); this lets
 you turn the prediction into a textured mesh or render it through any
-camera.  No MoGe / VGGT / pose estimator required at inference time.
+camera.  No MoGe / pose estimator required at inference time.
 
 ## Background handling
 
@@ -249,7 +249,7 @@ wt/                       ← installable Python package
 │   ├── canon.py          ← Camera ↔ TRELLIS canonical-frame transform
 │   ├── voxelise.py       ← expand_cloud_ray_xyz + v4_ray_fill
 │   └── pipeline.py       ← load_trellis2_pipeline + inject_coords_into_trellis2 + save_mesh_glb
-└── _internal/            ← Vendored deps (Wan2.1 layer init, MoGe backbone, VGGT layer scale, ...)
+└── _internal/            ← Vendored deps (Wan2.1 layer init, MoGe backbone, ...)
 
 examples/
 ├── infer_rgba.py         ← Single RGBA image (object model; 4-seed sweep by default)
@@ -302,6 +302,5 @@ The model architecture borrows from:
 
 * [MoGe](https://huggingface.co/microsoft/moge-2-vitl) (DINOv2 encoder backbone)
 * [Wan 2.1](https://github.com/Wan-Video/Wan2.1) (timestep embedding + initialisation)
-* [VGGT](https://github.com/facebookresearch/vggt) (LayerScale)
 
 We thank the authors for releasing their code.
