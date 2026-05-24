@@ -51,121 +51,141 @@ def make_default_intrinsics(h: int, w: int) -> np.ndarray:
     )
 
 
-_SKY_SEGMENTER: dict | None = None  # cached {"processor", "model", "sky_ids"}
+#: Default foreground-segmentation model.  ``BiRefNet_HR`` (MIT) outputs an
+#: 8-bit grayscale alpha matte and is currently SOTA for high-resolution
+#: dichotomous image segmentation.  Override with :func:`segment_foreground`'s
+#: ``model_name`` argument if you have a different fine-tune locally.
+DEFAULT_FG_SEGMENTER = "ZhengPeng7/BiRefNet_HR"
+
+# Module-level cache: {"name": str, "model": nn.Module, "device": torch.device}.
+# Re-used across calls so the BiRefNet weights only load once per process.
+_FG_SEGMENTER: dict | None = None
 
 
-def segment_sky_mask(
+def segment_foreground(
     rgb_uint8: np.ndarray,
-    model_name: str = "nvidia/segformer-b0-finetuned-ade-512-512",
+    model_name: str = DEFAULT_FG_SEGMENTER,
     device: str | torch.device | None = None,
-    min_ratio: float = 0.0,
+    threshold: int = 64,
+    matte: bool = False,
 ) -> np.ndarray:
-    """Predict an ``H×W`` boolean sky mask using a lightweight ADE20K SegFormer.
+    """Predict a foreground alpha matte using BiRefNet (Hugging Face).
 
-    The model and processor are cached after first use.  The default
-    ``segformer-b0-finetuned-ade-512-512`` is ~14M params and runs in well
-    under a second per image on a modern GPU; you can swap in the larger
-    ``...-b5-finetuned-ade-640-640`` for higher quality on tricky outdoor
-    scenes.
+    Loads ``ZhengPeng7/BiRefNet_HR`` by default — MIT-licensed, BiRefNet
+    architecture, currently SOTA on DIS / HRSOD / COD benchmarks.  Outputs a
+    high-quality 8-bit alpha matte (hair, fur, semi-transparent edges all
+    preserved).
 
     Args:
         rgb_uint8: ``H×W×3`` uint8 RGB image (NOT RGBA).
-        model_name: Hugging Face checkpoint to use.
+        model_name: Hugging Face repo id.  ``BiRefNet_HR`` (2048² input) is
+            the default for highest quality on 1024² source images; pass
+            ``ZhengPeng7/BiRefNet`` for a smaller / faster version.
         device: torch device for the segmenter.  Defaults to ``cuda`` if
             available, else ``cpu``.
-        min_ratio: if the predicted sky covers less than this fraction of the
-            image, return an all-zero mask (lets you no-op on scenes that
-            don't actually contain sky).
+        threshold: Cut-off on the predicted matte (0-255) used when
+            ``matte=False``.  Pixels below this are treated as background.
+            Defaults to 64 — generous on edges, harsh on dark interior
+            shadows.
+        matte: If True return the raw ``H×W`` uint8 alpha matte; if False
+            (default) return a hard ``H×W`` bool mask after thresholding.
 
     Returns:
-        ``H×W`` bool array — True where the pixel is classified as sky.
+        ``H×W`` ``np.uint8`` (when ``matte=True``) or ``np.bool_``
+        (default).  True / >0 = foreground.
     """
-    try:
-        from transformers import (  # type: ignore[import]
-            SegformerForSemanticSegmentation,
-            SegformerImageProcessor,
-        )
-    except ImportError as exc:  # pragma: no cover
-        raise ImportError(
-            "Sky segmentation requires `transformers`. "
-            "Install with `pip install 'transformers>=4.40'`."
-        ) from exc
-
     if rgb_uint8.dtype != np.uint8 or rgb_uint8.ndim != 3 or rgb_uint8.shape[2] != 3:
         raise ValueError(
-            f"segment_sky_mask expects uint8 H×W×3 RGB; got "
+            f"segment_foreground expects uint8 H×W×3 RGB; got "
             f"{rgb_uint8.dtype}, shape={rgb_uint8.shape}"
         )
 
-    global _SKY_SEGMENTER
+    try:
+        from transformers import AutoModelForImageSegmentation  # type: ignore[import]
+    except ImportError as exc:  # pragma: no cover
+        raise ImportError(
+            "Foreground segmentation requires `transformers`. "
+            "Install with `pip install 'transformers>=4.40'`."
+        ) from exc
+    try:
+        from torchvision import transforms as _tv_transforms  # type: ignore[import]
+    except ImportError as exc:  # pragma: no cover
+        raise ImportError(
+            "Foreground segmentation requires `torchvision` (for BiRefNet "
+            "preprocessing).  Install with `pip install torchvision`."
+        ) from exc
+
+    global _FG_SEGMENTER
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = torch.device(device)
 
-    if _SKY_SEGMENTER is None or _SKY_SEGMENTER.get("name") != model_name:
-        print(f"[wt] loading sky segmenter ({model_name}) on {device} ...")
-        processor = SegformerImageProcessor.from_pretrained(model_name)
-        model = SegformerForSemanticSegmentation.from_pretrained(model_name)
-        model = model.to(device).eval()
-        sky_ids = [
-            int(k) for k, v in model.config.id2label.items() if v.lower() == "sky"
-        ]
-        if not sky_ids:
-            raise RuntimeError(
-                f"Model {model_name} has no 'sky' class; got labels "
-                f"{list(model.config.id2label.values())[:10]}..."
-            )
-        _SKY_SEGMENTER = {
+    if _FG_SEGMENTER is None or _FG_SEGMENTER.get("name") != model_name:
+        print(f"[wt] loading foreground segmenter ({model_name}) on {device} ...")
+        # trust_remote_code=True is required to pull BiRefNet's custom
+        # model class from the HF repo.  All MIT-licensed by ZhengPeng7.
+        model = AutoModelForImageSegmentation.from_pretrained(
+            model_name, trust_remote_code=True
+        )
+        model = model.to(device).to(torch.float32).eval()
+        # BiRefNet_HR is trained at 2048; BiRefNet (base) at 1024.
+        input_size = 2048 if "BiRefNet_HR" in model_name else 1024
+        _FG_SEGMENTER = {
             "name": model_name,
-            "processor": processor,
             "model": model,
-            "sky_ids": sky_ids,
             "device": device,
+            "input_size": input_size,
         }
 
-    state = _SKY_SEGMENTER
+    state = _FG_SEGMENTER
+    input_size = state["input_size"]
     pil = Image.fromarray(rgb_uint8, mode="RGB")
-    inputs = state["processor"](images=pil, return_tensors="pt").to(state["device"])
+    transform = _tv_transforms.Compose([
+        _tv_transforms.Resize((input_size, input_size)),
+        _tv_transforms.ToTensor(),
+        _tv_transforms.Normalize(
+            [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]
+        ),
+    ])
+    x = transform(pil).unsqueeze(0).to(state["device"])
     with torch.no_grad():
-        logits = state["model"](**inputs).logits
-    seg = torch.nn.functional.interpolate(
-        logits,
-        size=(rgb_uint8.shape[0], rgb_uint8.shape[1]),
-        mode="bilinear",
-        align_corners=False,
-    ).argmax(dim=1)[0].cpu().numpy()
-    sky_mask = np.isin(seg, state["sky_ids"])
-    if sky_mask.mean() < min_ratio:
-        return np.zeros_like(sky_mask, dtype=bool)
-    return sky_mask.astype(bool)
+        preds = state["model"](x)[-1].sigmoid().cpu()
+    # BiRefNet returns ``[B, 1, S, S]`` after sigmoid; resize back to source.
+    matte_t = preds[0, 0]
+    matte_pil = _tv_transforms.ToPILImage()(matte_t)
+    matte_pil = matte_pil.resize((rgb_uint8.shape[1], rgb_uint8.shape[0]))
+    alpha = np.array(matte_pil, dtype=np.uint8)
+    if matte:
+        return alpha
+    return alpha > threshold
 
 
-def apply_sky_mask(
+def apply_fg_mask(
     rgba_uint8: np.ndarray,
-    sky_mask: np.ndarray,
+    fg: np.ndarray,
     bg_color: tuple[int, int, int] = (0, 0, 0),
 ) -> np.ndarray:
-    """Zero-out the alpha and overwrite RGB for pixels marked as sky.
+    """Replace the RGB+alpha of background pixels with ``(bg_color, 0)``.
 
     Args:
         rgba_uint8: ``H×W×4`` uint8 RGBA image.
-        sky_mask: ``H×W`` bool array of sky pixels (e.g. from
-            :func:`segment_sky_mask`).
-        bg_color: RGB triple written into sky pixels.  Defaults to black to
-            match the training distribution (most scene renders sit on a
-            black background outside the rendered viewport).
+        fg: ``H×W`` bool array (or ``H×W`` uint8 alpha matte) of foreground
+            pixels.  An alpha-matte input is binarised at 0.
+        bg_color: RGB triple written into background pixels.
 
     Returns:
-        A new RGBA array with sky pixels set to ``(bg_color, alpha=0)``.
+        A new RGBA array with background pixels set to ``(bg_color, 0)``.
     """
-    if rgba_uint8.shape[:2] != sky_mask.shape:
+    if rgba_uint8.shape[:2] != fg.shape[:2]:
         raise ValueError(
-            f"sky_mask shape {sky_mask.shape} does not match RGBA "
+            f"foreground mask shape {fg.shape} does not match RGBA "
             f"{rgba_uint8.shape[:2]}"
         )
+    fg_bool = fg.astype(bool) if fg.dtype != bool else fg
     out = rgba_uint8.copy()
-    out[sky_mask, :3] = np.asarray(bg_color, dtype=out.dtype)
-    out[sky_mask, 3] = 0
+    bg = ~fg_bool
+    out[bg, :3] = np.asarray(bg_color, dtype=out.dtype)
+    out[bg, 3] = 0
     return out
 
 
@@ -194,27 +214,28 @@ def _auto_alpha_from_near_white(
 
 
 def load_rgba_image(
-    path: str | os.PathLike, auto_alpha: bool = True
+    path: str | os.PathLike,
+    auto_alpha: bool = True,
+    fg_segmenter: str = DEFAULT_FG_SEGMENTER,
 ) -> np.ndarray:
     """Load an image as ``uint8 H×W×4`` RGBA.
 
     For images that already carry an alpha channel, the alpha is used
-    verbatim.
+    verbatim — no model is loaded.
 
     For RGB images (no alpha channel), the behaviour depends on
     ``auto_alpha``:
 
-    * ``auto_alpha=True`` (default): try a near-white-background heuristic.
-      If the image looks like a matted object on a near-uniform light
-      background (e.g. ``case_new.png``, SAM/SDXL outputs), the heuristic
-      builds a binary alpha that excludes the background.  This avoids
-      feeding background pixels into the model as if they were valid
-      foreground geometry.
-    * If the heuristic fails (e.g. genuine scene RGB), or ``auto_alpha`` is
-      ``False``, a fully-opaque alpha is synthesised and a warning is
-      printed.  In that mode the entire image is treated as foreground and
-      the resulting "ghost" geometry over the background is the expected
-      behaviour.
+    * ``auto_alpha=True`` (default): try a fast near-white-background
+      heuristic first.  If the image is a clean matte (white-on-object,
+      e.g. e-commerce / SDXL / SAM outputs) this returns immediately with
+      ``< 10ms``.  Otherwise we fall back to BiRefNet
+      (``ZhengPeng7/BiRefNet_HR``, MIT) to predict a proper foreground
+      matte.  BiRefNet weights are auto-downloaded from Hugging Face the
+      first time you call this function.
+    * ``auto_alpha=False``: synthesise a fully-opaque alpha and print a
+      warning.  The model will treat the whole image as foreground; expect
+      "ghost" geometry over the background.
     """
     pil = Image.open(str(path))
     if pil.mode == "RGBA":
@@ -222,19 +243,37 @@ def load_rgba_image(
     rgb = np.array(pil.convert("RGB"))
 
     if auto_alpha:
+        # Fast path: near-white background heuristic.  Skips loading
+        # BiRefNet (~880MB) on clean stock-photo / SDXL inputs.
         auto = _auto_alpha_from_near_white(rgb)
         if auto is not None:
             print(
-                "[wt] auto-detected near-white background; using heuristic alpha. "
-                "Pass --no-auto-alpha (or provide a proper RGBA) to disable."
+                "[wt] auto-detected near-white background; using heuristic "
+                "alpha (no segmentation model loaded)."
             )
             return np.dstack([rgb, auto])
 
+        # Quality path: BiRefNet foreground matting.
+        try:
+            print(
+                f"[wt] running foreground segmentation ({fg_segmenter}) ..."
+            )
+            fg = segment_foreground(rgb, model_name=fg_segmenter)
+            alpha = (fg.astype(np.uint8)) * 255
+            return np.dstack([rgb, alpha])
+        except (ImportError, OSError, RuntimeError) as exc:
+            print(
+                f"[wt] WARNING: foreground segmentation failed ({exc}); "
+                "falling back to fully-opaque alpha.  Pass a proper RGBA "
+                "image or `pip install transformers torchvision` to enable "
+                "BiRefNet-based auto-matting."
+            )
+
     print(
-        "[wt] WARNING: input image has no alpha channel and no auto-mask "
-        "could be derived.  Treating the entire image as foreground; the "
-        "model may produce 'ghost' geometry over the background.  Pass a "
-        "proper RGBA image with the object alpha-matted out."
+        "[wt] WARNING: input image has no alpha channel.  Treating the "
+        "entire image as foreground; the model may produce 'ghost' "
+        "geometry over the background.  Pass a proper RGBA image to "
+        "disable this warning."
     )
     alpha = np.full(rgb.shape[:2], 255, dtype=np.uint8)
     return np.dstack([rgb, alpha])

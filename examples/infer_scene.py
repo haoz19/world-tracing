@@ -14,18 +14,11 @@ Twenty hand-picked scene samples (4 featured + 16 more) live under
 ``examples/test_images/scene/`` -- see ``examples/test_images/README.md``.
 
 The scene model (``r69e_v2_evermotion_ithappy_504``) was trained on
-full-frame indoor renders.  By default this script:
-
-* Treats the whole image as foreground (no center-crop, no near-white
-  heuristic).
-* Runs an ADE20K SegFormer to mark sky pixels as **invalid** before
-  inference -- the scene model was trained on indoor renders without
-  sky, so leaving outdoor sky pixels active leads to wildly far points
-  along the horizon.  Pass ``--no-sky-segment`` to disable, or
-  ``--sky-mask path.png`` to supply your own (white = sky).
-
-You can still flip any of those for unusual inputs (e.g. cropping a single
-object out of a scene).
+full-frame indoor renders.  By default this script treats the whole
+image as foreground (no center-crop, no auto-matting); the released
+scene model was trained on indoor renders without sky, so for outdoor
+images with large sky regions you should pre-mask the sky externally
+(any matting / segmentation tool of your choice).
 """
 
 from __future__ import annotations
@@ -35,17 +28,11 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from PIL import Image
 
 from wt import inference_diffusion, solve_intrinsics_from_xyz
 from wt.checkpoint import build_model_and_load_ckpt
 from wt.cli import parse_bg_color
-from wt.data import (
-    apply_sky_mask,
-    load_rgba_image,
-    preprocess_rgba_for_model,
-    segment_sky_mask,
-)
+from wt.data import load_rgba_image, preprocess_rgba_for_model
 from wt.inference import _bypass_activation_checkpointing
 from wt.viz import (
     init_recording,
@@ -62,8 +49,12 @@ def main():
     p.add_argument(
         "--ckpt",
         required=True,
-        type=Path,
-        help="Path to checkpoint .pt (r69e scene model recommended)",
+        type=str,
+        help=(
+            "Checkpoint -- a local .pt path, an HF shorthand "
+            "``hf://owner/repo``, or a bare config name "
+            "(``r69e`` recommended for scene mode)."
+        ),
     )
     p.add_argument(
         "--config",
@@ -103,46 +94,10 @@ def main():
         "--auto-alpha",
         action="store_true",
         help=(
-            "Run the near-white background heuristic.  Off by default for "
-            "scene mode; turn it on if your input is actually a cutout."
+            "Run BiRefNet-based foreground matting (or the near-white "
+            "heuristic if applicable).  Off by default for scene mode; "
+            "turn it on if your input is actually a cutout."
         ),
-    )
-    p.add_argument(
-        "--sky-segment",
-        dest="sky_segment",
-        action="store_true",
-        help=(
-            "Run an ADE20K SegFormer and mark sky pixels as invalid before "
-            "feeding the image to the scene model.  ON by default; the "
-            "scene model was trained without sky and produces unstable "
-            "depth on sky pixels otherwise."
-        ),
-    )
-    p.add_argument(
-        "--no-sky-segment", dest="sky_segment", action="store_false",
-        help="Disable automatic sky segmentation.",
-    )
-    p.set_defaults(sky_segment=True)
-    p.add_argument(
-        "--sky-mask",
-        type=Path,
-        default=None,
-        help=(
-            "Optional path to a precomputed sky mask PNG (white = sky).  "
-            "When provided, this overrides ``--sky-segment``."
-        ),
-    )
-    p.add_argument(
-        "--sky-model",
-        type=str,
-        default="nvidia/segformer-b0-finetuned-ade-512-512",
-        help="HuggingFace model id for the SegFormer ADE20K segmenter.",
-    )
-    p.add_argument(
-        "--save-sky-mask",
-        type=Path,
-        default=None,
-        help="If set, save the predicted/loaded sky mask to this path for inspection.",
     )
     p.add_argument(
         "--layer-timeline",
@@ -162,30 +117,6 @@ def main():
     rgba = load_rgba_image(args.image, auto_alpha=args.auto_alpha)
     print(f"[wt] input image: {rgba.shape}")
     bg_color = parse_bg_color(args.bg_color)
-
-    if args.sky_mask is not None:
-        sky_img = np.array(Image.open(args.sky_mask).convert("L"))
-        if sky_img.shape != rgba.shape[:2]:
-            raise SystemExit(
-                f"sky mask shape {sky_img.shape} != image {rgba.shape[:2]}"
-            )
-        sky_mask = sky_img > 127
-        print(f"[wt] loaded sky mask: {sky_mask.mean():.2%} of pixels")
-    elif args.sky_segment:
-        sky_mask = segment_sky_mask(
-            rgba[:, :, :3], model_name=args.sky_model, device=device
-        )
-        print(f"[wt] segmented sky: {sky_mask.mean():.2%} of pixels")
-    else:
-        sky_mask = None
-
-    if sky_mask is not None:
-        if args.save_sky_mask is not None:
-            args.save_sky_mask.parent.mkdir(parents=True, exist_ok=True)
-            Image.fromarray((sky_mask * 255).astype(np.uint8)).save(args.save_sky_mask)
-            print(f"[wt] wrote sky mask preview to {args.save_sky_mask}")
-        sky_bg = (0, 0, 0) if bg_color is None else bg_color
-        rgba = apply_sky_mask(rgba, sky_mask, bg_color=sky_bg)
 
     rgb_t, mask_t, intr_t = preprocess_rgba_for_model(
         rgba,

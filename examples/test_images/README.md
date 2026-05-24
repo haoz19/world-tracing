@@ -47,7 +47,7 @@ python examples/infer_rgba.py \
     --ckpt  /path/to/r75b_spikeskip_hardaug.pt \
     --out   /tmp/obj014.rrd
 
-# Scene (r69e), with the default SegFormer sky mask
+# Scene (r69e); for outdoor scenes with large sky, pre-mask the sky externally
 python examples/infer_scene.py \
     --image examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png \
     --ckpt  /path/to/r69e_v2_evermotion_ithappy_504.pt \

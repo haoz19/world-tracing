@@ -47,9 +47,17 @@ adds [`rerun-sdk`](https://rerun.io/) (for the ``.rrd`` viewer) and
 Optional extras:
 
 ```bash
-pip install -e ".[viz,sky]"     # + transformers, for sky segmentation
-pip install -e ".[viz,flash]"   # + flash-attn (auto-detected at runtime)
+pip install -e ".[viz,bg]"             # + BiRefNet-based foreground matting for RGB inputs
+pip install -e ".[viz,flash]"          # + flash-attn (auto-detected at runtime)
+pip install -e ".[viz,textured-mesh]"  # + helpers for image → textured GLB (see below)
 ```
+
+The `bg` extra pulls in
+[`ZhengPeng7/BiRefNet_HR`](https://huggingface.co/ZhengPeng7/BiRefNet_HR)
+(MIT, SOTA dichotomous segmentation) so that `infer_rgba.py` /
+`infer_multiseed.py` can auto-matte RGB inputs that don't already carry
+an alpha channel.  Without this extra they fall back to a fast
+near-white-background heuristic and a warning.
 
 ## Quickstart
 
@@ -83,8 +91,6 @@ a binary alpha; pass `--no-auto-alpha` to disable that.
 ### 2. Scene RGB (`r69e`)
 
 ```bash
-pip install -e ".[viz,sky]"   # extra dependency: transformers (for sky segmentation)
-
 python examples/infer_scene.py \
     --image  examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png \
     --ckpt   r69e \
@@ -93,23 +99,12 @@ python examples/infer_scene.py \
 ```
 
 Scene mode treats the entire frame as foreground (no alpha mask) and
-keeps the raw RGB (no background overwrite).  The scene model was
-trained on indoor renders without sky, so for outdoor scenes
-`infer_scene.py` automatically runs an [ADE20K
-SegFormer](https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512)
-to mark sky pixels as **invalid** before inference; without this, sky
-pixels are pushed to a wildly large depth and dominate the layer-0
-output.
-
-Useful flags:
-
-```bash
---no-sky-segment             # disable auto sky segmentation
---sky-mask path/to/sky.png   # supply your own white=sky mask
---save-sky-mask /tmp/sky.png # dump the predicted sky mask for inspection
---sky-model      ...         # swap in a different ADE20K segmenter
---layer-timeline             # log layers along a Rerun timeline (scrub layer-by-layer)
-```
+keeps the raw RGB (no background overwrite).  The released scene model
+was trained on indoor renders without sky, so for outdoor scenes with
+large sky regions you should pre-mask the sky externally (any matting
+tool you like — e.g. running the same `wt.data.segment_foreground`
+on the **inverted** image, or your favourite ADE20K segmenter outside
+the pipeline) before feeding the result into `infer_scene.py`.
 
 ### 3. Dynamic clip (`r76`)
 
@@ -140,6 +135,40 @@ python examples/infer_multiseed.py \
 Four independent denoising trajectories of the same image, laid out
 side-by-side along ``+X`` so you can compare the variation in occluded
 layers.
+
+### 5. Textured mesh export (image → GLB)
+
+Chains the released multilayer-depth model with the public
+[TRELLIS.2](https://github.com/microsoft/TRELLIS.2) image-to-3D
+pipeline: we **skip** TRELLIS.2's Stage-1 sparse-structure diffusion
+and feed it the voxel coords derived from our predicted XYZ.  Stages 2
++ 3 (shape SLat + texture SLat + mesh decode) then produce a textured
+GLB.
+
+```bash
+# 1. one-time TRELLIS.2 setup (only needed once; ~30 min of dep install)
+git clone https://github.com/microsoft/TRELLIS.2
+cd TRELLIS.2
+bash setup.sh --new-env --basic --flash-attn --o-voxel \
+              --nvdiffrast --cumesh --flexgemm
+conda activate trellis2
+
+# 2. install wt in that same env
+pip install -e /path/to/world-tracing[viz,textured-mesh]
+
+# 3. run end-to-end
+python examples/infer_textured_mesh.py \
+    --image  examples/test_images/object/obj014_leather_briefcase.png \
+    --ckpt   r75b \
+    --out    /tmp/wt_obj014.glb \
+    --rrd    /tmp/wt_obj014.rrd \
+    --trellis2-path /path/to/TRELLIS.2
+```
+
+The `--pipeline-type` flag selects the TRELLIS.2 stage configuration
+(`1024_cascade` is the default — best quality / time trade-off).
+Outputs land at the path you pass to `--out`; pass `--rrd` to additionally
+dump the multilayer point cloud for sanity-check viewing in Rerun.
 
 ## Checkpoint handling
 
@@ -198,19 +227,24 @@ wt/                       ← installable Python package
 ├── model.py              ← MultilayerXYZModel (configurable wrapper around ThreersV2)
 ├── inference.py          ← inference_diffusion / inference_diffusion_multiview / inference_video_diffusion
 ├── sampling.py           ← Euler ODE flow-matching sampler (replaces FMLossWrapper)
-├── data.py               ← Image loaders, alpha-aware crop+resize, video clip preprocess
+├── data.py               ← Image loaders (BiRefNet auto-matting), preprocessing, video clip
 ├── viz.py                ← Rerun .rrd output helpers (single image, video timeline, multi-seed)
 ├── intrinsics.py         ← Solve K from predicted XYZ (replaces MoGe at inference)
 ├── checkpoint.py         ← Released model configs + checkpoint loader + HF Hub resolver
 ├── postproc.py           ← Optional point-cloud cleanup (edge-flyer filter for dynamic outputs)
 ├── cli.py                ← Shared CLI helpers
+├── textured_mesh/        ← TRELLIS.2 bridge: ours_v4 voxelisation + stage-2/3 driver
+│   ├── canon.py          ← Camera ↔ TRELLIS canonical-frame transform
+│   ├── voxelise.py       ← expand_cloud_ray_xyz + v4_ray_fill
+│   └── pipeline.py       ← load_trellis2_pipeline + inject_coords_into_trellis2 + save_mesh_glb
 └── _internal/            ← Vendored deps (Wan2.1 layer init, MoGe backbone, VGGT layer scale, ...)
 
 examples/
 ├── infer_rgba.py         ← Single RGBA image (object model)
 ├── infer_scene.py        ← Single scene RGB (r69e)
 ├── infer_video.py        ← Dynamic clip (r76)
-└── infer_multiseed.py    ← N seeds on one image
+├── infer_multiseed.py    ← N seeds on one image
+└── infer_textured_mesh.py ← Image → MLD → TRELLIS.2 stages 2+3 → textured GLB
 ```
 
 ## Hardware
@@ -228,11 +262,6 @@ work with reduced ``--num-steps`` or by sampling at a smaller resolution.
 
 ## Roadmap
 
-* **Textured-mesh export.**  An end-to-end "image → multilayer depth →
-  voxelisation (`v4_ray_fill`) → [TRELLIS.2](https://github.com/microsoft/TRELLIS)
-  stage 2 + 3 → GLB" pipeline that produces a clean textured mesh from a
-  single image.  Will be added as `examples/infer_textured_mesh.py` once
-  the public TRELLIS.2 integration is stabilised.
 * **More published checkpoints.**  Updated `r75b` / `r69e` / `r76` from
   later training rounds, and a single-image multi-view variant.
 

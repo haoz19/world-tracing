@@ -53,11 +53,25 @@ viz = [
     "rerun-sdk>=0.22,<0.23",
     "scipy>=1.11",
 ]
-sky = [
+# Foreground matting for object inputs (ZhengPeng7/BiRefNet_HR, MIT).
+# Enables high-quality auto-alpha for RGB → RGBA in load_rgba_image().
+# ``kornia`` is required by BiRefNet's HF ``trust_remote_code`` module.
+bg = [
     "transformers>=4.40",
+    "torchvision>=0.17",
+    "kornia>=0.7",
+    "einops>=0.7",
+    "timm>=0.9",
 ]
 flash = [
     "flash-attn>=2.5",
+]
+# Textured-mesh export via the public TRELLIS.2 stack.
+# NOTE: trellis2 itself is not on PyPI; clone microsoft/TRELLIS.2 and run
+# its setup.sh, then point --trellis2-path at the checkout (see README).
+textured-mesh = [
+    "scipy>=1.11",
+    "trimesh>=4.0",
 ]
 dev = [
     "ruff>=0.4",

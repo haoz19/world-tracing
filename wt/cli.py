@@ -43,8 +43,13 @@ def add_common_args(p: argparse.ArgumentParser, default_out: str) -> None:
     p.add_argument(
         "--ckpt",
         required=True,
-        type=Path,
-        help="Path to checkpoint .pt",
+        type=str,
+        help=(
+            "Checkpoint -- one of: a local path to a .pt / .safetensors "
+            "file, an HF shorthand ``hf://owner/repo[/file.pt]``, or a "
+            "bare config name (``r75b``, ``r69e``, ``r76``) which "
+            "downloads the released weights from Hugging Face Hub."
+        ),
     )
     p.add_argument(
         "--config",
