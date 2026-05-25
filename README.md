@@ -26,7 +26,7 @@
 <p>
   <a href="https://arxiv.org/abs/2026.XXXXX"><img alt="Paper" src="https://img.shields.io/badge/Paper-arXiv-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white"></a>
   <a href="https://huggingface.co/haoz19"><img alt="Hugging Face Models" src="https://img.shields.io/badge/Hugging%20Face-Model-FFD21E?style=for-the-badge&logo=huggingface&logoColor=white"></a>
-  <a href="https://huggingface.co/spaces/haoz19/world-tracing-demo"><img alt="Hugging Face Demo" src="https://img.shields.io/badge/Hugging%20Face-Demo-9333EA?style=for-the-badge&logo=huggingface&logoColor=white"></a>
+  <a href="https://haoz19-world-tracing-demo.hf.space/"><img alt="Hugging Face Demo" src="https://img.shields.io/badge/Hugging%20Face-Demo-9333EA?style=for-the-badge&logo=huggingface&logoColor=white"></a>
   <a href="https://haoz19.github.io/world-tracing-page/"><img alt="Project Website" src="https://img.shields.io/badge/Project-Website-2563EB?style=for-the-badge&logo=githubpages&logoColor=white"></a>
   <a href="./LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white"></a>
 </p>
