@@ -299,7 +299,7 @@ wt/                       ← installable Python package
 │   ├── canon.py          ← Camera ↔ TRELLIS canonical-frame transform
 │   ├── voxelise.py       ← expand_cloud_ray_xyz + v4_ray_fill
 │   └── pipeline.py       ← load_trellis2_pipeline + inject_coords_into_trellis2 + save_mesh_glb
-└── _internal/            ← Vendored deps (Wan2.1 layer init, MoGe backbone, ...)
+└── _core/                ← Vendored deps (Wan2.1 layer init, MoGe backbone, ...)
 
 examples/
 ├── infer_rgba.py         ← Single RGBA image (object model; 4-seed sweep by default)

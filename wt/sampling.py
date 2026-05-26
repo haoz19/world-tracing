@@ -1,6 +1,6 @@
 """Flow-matching sampler for ``MultilayerXYZModel`` inference.
 
-The original code used :class:`wt._internal.web4d.training.diffusion_loss.FMLossWrapper`
+The original code used :class:`wt._core.web4d.training.diffusion_loss.FMLossWrapper`
 for both training loss and inference denoising.  At inference time only a
 small subset of that wrapper is actually exercised:
 

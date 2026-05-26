@@ -18,12 +18,12 @@ import torch.nn as nn
 from jaxtyping import Float
 from torch import Tensor
 
-from wt._internal.vendor.vggt.layers import layer_scale
-from wt._internal.diffusion import constants
-from wt._internal.engine import activation_checkpoint
-from wt._internal.web4d.models import blocks as model_blocks
-from wt._internal.web4d.models import config as model_config
-from wt._internal.web4d.models import model_utils, threers, threers_v2
+from wt._core.vendor.vggt.layers import layer_scale
+from wt._core.diffusion import constants
+from wt._core.engine import activation_checkpoint
+from wt._core.web4d.models import blocks as model_blocks
+from wt._core.web4d.models import config as model_config
+from wt._core.web4d.models import model_utils, threers, threers_v2
 
 logger = structlog.get_logger(__name__)
 
@@ -338,7 +338,7 @@ class ThreersV2Patched(threers_v2.ThreersV2):
         if self.encoder_model == "moge" and not self.inference_mode:
             local_zoo = _ensure_moge_local_zoo()
             if os.path.isdir(local_zoo):
-                from wt._internal.vendor.moge.moge_model import MoGeModel
+                from wt._core.vendor.moge.moge_model import MoGeModel
 
                 moge_model = MoGeModel.from_pretrained(
                     model_name="vitl",
@@ -352,7 +352,7 @@ class ThreersV2Patched(threers_v2.ThreersV2):
                 self.encoder.register_buffer("image_mean", moge_model.image_mean)
                 self.encoder.register_buffer("image_std", moge_model.image_std)
                 del moge_model
-                from wt._internal.components import nnn
+                from wt._core.components import nnn
 
                 self.encoder.final_project = nnn.Linear(4096, self.decoder_embed_dim)
                 return
@@ -1681,7 +1681,7 @@ class SplitTransformerProjection(nn.Module):
                 # full-resolution per-pixel predictions, so we keep the
                 # transformer head blocks unchanged but skip self.geo_proj.
                 # Mask / RGB heads still use the legacy linear projection.
-                from wt._internal.web4d.models.patchhead_utils import (
+                from wt._core.web4d.models.patchhead_utils import (
                     ConvHead as _ConvHead,
                     RaymapHead as _RaymapHead,
                 )
