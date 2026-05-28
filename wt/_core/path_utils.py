@@ -1,4 +1,4 @@
-"""Inference-only stub of ``wlt.wpath``.
+"""Lightweight path helpers used by the vendored MoGe loader.
 
 Only ``ensure_pathlike`` is used at this layer (by vendored MoGe) — and the
 inference release never exercises the GCS/S3 download paths (we always
@@ -24,8 +24,7 @@ def ensure_pathlike(path: Any, **_kwargs) -> pathlib.Path:
 
 
 class WPath(pathlib.PosixPath):
-    """Stand-in for ``wlt.wpath.WPath``.  Local-only behaviour."""
+    """Path subclass kept for source compatibility with older import sites."""
 
 
-# Re-exported alias for code that does ``from wt._core.wpath import WPath``.
 __all__ = ["ensure_pathlike", "WPath"]

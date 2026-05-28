@@ -1,11 +1,9 @@
-"""Inference-only stub of ``wlt.torchcam``.
+"""Minimal pin-hole camera placeholder used only as a type annotation.
 
-The full ``wlt.torchcam`` module is a fully-featured pin-hole camera library
-(extrinsic/intrinsic dataclass, rays, image resizing, etc.).  Our released
-multilayer-geometry inference path never builds or consumes a Camera object
-(we pass ``camera=None`` everywhere, which is the default for the r75b /
-r69e / r76 configs), so we only need to make ``torchcam.Camera`` resolvable
-as a type annotation.
+The released multilayer-geometry inference path never builds or consumes a
+``Camera`` object (we pass ``camera=None`` everywhere, which is the default
+for the r75b / r69e / r76 configs), so we only need to make ``Camera``
+resolvable as a type annotation.
 """
 
 from __future__ import annotations
@@ -31,11 +29,11 @@ class Camera:
 
 def update_extrinsic(camera: Camera, position=None, **_kwargs) -> Camera:
     raise NotImplementedError(
-        "torchcam.update_extrinsic is not used by the release inference path."
+        "camera.update_extrinsic is not used by the release inference path."
     )
 
 
 def resize_with_crop(camera: Camera, target_size) -> Camera:  # pragma: no cover
     raise NotImplementedError(
-        "torchcam.resize_with_crop is not used by the release inference path."
+        "camera.resize_with_crop is not used by the release inference path."
     )

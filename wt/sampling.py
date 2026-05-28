@@ -1,8 +1,8 @@
 """Flow-matching sampler for ``MultilayerXYZModel`` inference.
 
-The original code used :class:`wt._core.web4d.training.diffusion_loss.FMLossWrapper`
-for both training loss and inference denoising.  At inference time only a
-small subset of that wrapper is actually exercised:
+The training-time code used a single FlowMatching loss wrapper for both the
+training loss and inference denoising.  At inference time only a small
+subset of that wrapper is actually exercised:
 
 * ``use_pixel_denoising=True`` (raw-data denoising, no VAE)
 * ``hunyuan_shift_factor=1.0`` (identity timestep shift)
@@ -24,10 +24,10 @@ import torch
 from jaxtyping import Float
 from torch import Tensor, nn
 
-#: Minimum non-zero timestep we'll feed to the model.  The original training
-#: code (``wlt.diffusion.constants.T_MIN_CLAMP``) guards against sampling
-#: timesteps below this value because the model was never trained that close
-#: to ``t=0``.  ``iterations=20`` lands the smallest step at exactly 0.05,
+#: Minimum non-zero timestep we'll feed to the model.  The training-time
+#: code guards against sampling timesteps below this value because the
+#: model was never trained that close to ``t=0``.  ``iterations=20`` lands
+#: the smallest step at exactly 0.05,
 #: which is the recommended default.  We warn (rather than raise) if a
 #: smaller ``iterations`` is requested.
 T_MIN_CLAMP: float = 0.05

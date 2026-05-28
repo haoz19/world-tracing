@@ -13,8 +13,8 @@ from torch.nn.attention.flex_attention import flex_attention
 from wt._core.components import flash_attention, nnn
 from wt._core.models.wan_video import layers as wan_video_layers
 from wt._core.utils import torch_utils
-from wt._core.web4d.models import config as model_config
-from wt._core.web4d.models import model_utils
+from wt._core.arch.models import config as model_config
+from wt._core.arch.models import model_utils
 
 logger = structlog.get_logger(__name__)
 
@@ -695,7 +695,7 @@ class TimestepProjection(nn.Module):
     def forward(self, t: Float[Tensor, "b"]) -> Float[Tensor, "b 1 x d"]:
         """
         Project diffusion timestep to get timestep embedding and adaln input.
-        Adapted from src/wlt/models/wan_video/base_model.py
+        Adapted from the Wan2.1 video base-model time-embedding head.
         """
         with torch_utils.maybe_autocast(t.device, torch.float32):
             t = t * model_config.DIFFUSION_TIMESTEP_SCALE

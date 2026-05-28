@@ -1,7 +1,4 @@
-"""Inference-only shim of ``wlt.utils.torch_utils``.
-
-Only the helpers actually used by the released inference path are kept.
-"""
+"""Small ``torch`` helpers used by the released inference path."""
 
 from __future__ import annotations
 
@@ -25,11 +22,7 @@ def tensor_to_numpy(x: Tensor) -> np.ndarray:
 
 @contextlib.contextmanager
 def maybe_autocast(device: torch.device, dtype: torch.dtype = torch.bfloat16):
-    """Mirror of ``wlt.utils.torch_utils.maybe_autocast``.
-
-    Wraps ``torch.autocast`` while no-op'ing on CPU+float32 (which autocast
-    cannot handle).
-    """
+    """Wrap ``torch.autocast``, no-op'ing on CPU+float32 (which autocast cannot handle)."""
     assert dtype in (torch.float16, torch.bfloat16, torch.float32), dtype
     assert device.type in ("cpu", "cuda"), device
     if device.type == "cpu" and dtype == torch.float32:

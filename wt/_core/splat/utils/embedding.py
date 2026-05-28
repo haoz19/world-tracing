@@ -130,7 +130,6 @@ class TimeEmbedding(TimeInfo):
         return t_embed
 
 
-# TODO (WOR-1367): Unify Positional embedding of ZipNeRF and splat refinement
 class PosEmbedding(nn.Module):
     """A Fourier embedding that maps x to (x, sin(2^k x), cos(2^k x), ...)
     Adapted from https://github.com/kwea123/nerf_pl/blob/master/models/nerf.py

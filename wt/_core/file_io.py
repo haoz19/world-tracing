@@ -1,4 +1,4 @@
-"""Inference-only stub of ``wlt.wfile``.
+"""Lightweight file-IO helpers used by the vendored MoGe loader.
 
 Only ``cache_remote_path`` is referenced (by vendored MoGe's
 ``from_pretrained``).  The released inference path does NOT call
@@ -15,7 +15,7 @@ from typing import Any
 
 def cache_remote_path(path: Any, **_kwargs) -> pathlib.Path:
     raise NotImplementedError(
-        "wt._core.wfile.cache_remote_path is an inference-only stub.  "
+        "wt._core.file_io.cache_remote_path is an inference-only stub.  "
         "If you reached this error you are probably calling "
         "MoGeModel.from_pretrained(); the release path instantiates "
         "MoGeModel with random weights and loads its own state dict instead."

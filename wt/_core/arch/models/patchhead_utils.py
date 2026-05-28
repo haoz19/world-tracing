@@ -16,7 +16,7 @@ from torch.nn import functional as F
 
 from wt._core.components import nnn
 from wt._core.splat.utils import embedding
-from wt._core.web4d.models import blocks
+from wt._core.arch.models import blocks
 
 logger = structlog.get_logger(__name__)
 

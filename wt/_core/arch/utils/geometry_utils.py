@@ -1,8 +1,6 @@
-"""Inference-only slim of ``wlt.web4d.utils.geometry_utils``.
+"""Tiny geometry helper used by the release inference path.
 
-The original module is ~400 lines of geometric utilities depending on
-``wlt.pytree`` / ``wlt.torchcam`` / ``wlt.math.rigid_body``.  Our release
-path only uses :func:`invert_se3` so we re-implement it inline against
+We only need :func:`invert_se3` so it is implemented inline against
 ``torch`` only.
 """
 

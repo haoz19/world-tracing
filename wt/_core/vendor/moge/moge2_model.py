@@ -19,7 +19,7 @@ from wt._core.vendor.moge.utils.wrap_module import wrap_dinov2_attention_with_sd
 from torch import nn
 from torch.nn import functional as F
 
-from wt._core import wfile, wpath
+from wt._core import file_io, path_utils
 
 logger = structlog.get_logger(__name__)
 
@@ -605,20 +605,19 @@ class MoGeModel(nn.Module):
                     f"Supported models: 'moge-2-vitl', 'moge-2-vitl-normal'"
                 )
             else:
-                zoo_dir = wpath.ensure_pathlike(MODEL_ZOO_DIR)
+                zoo_dir = path_utils.ensure_pathlike(MODEL_ZOO_DIR)
                 model_config = zoo_dir / f"{model_name}-config.json"
                 model_weights = zoo_dir / f"{model_name}.safetensors"
 
-        model_config = wpath.ensure_pathlike(model_config)
-        model_weights = wpath.ensure_pathlike(model_weights)
+        model_config = path_utils.ensure_pathlike(model_config)
+        model_weights = path_utils.ensure_pathlike(model_weights)
 
-        # Load the model config.
-        with wfile.cache_remote_path(model_config).open("r") as f:
+        with file_io.cache_remote_path(model_config).open("r") as f:
             model_config = json.load(f)
             if model_kwargs is not None:
                 model_config.update(model_kwargs)
 
-        local_weights_path = wfile.cache_remote_path(model_weights)
+        local_weights_path = file_io.cache_remote_path(model_weights)
         with safetensors.safe_open(local_weights_path, framework="pt") as weights:
             state_dict = {k: weights.get_tensor(k) for k in weights.keys()}  # noqa: SIM118
 

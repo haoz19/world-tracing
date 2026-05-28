@@ -21,9 +21,9 @@ from torch import Tensor
 from wt._core.vendor.vggt.layers import layer_scale
 from wt._core.diffusion import constants
 from wt._core.engine import activation_checkpoint
-from wt._core.web4d.models import blocks as model_blocks
-from wt._core.web4d.models import config as model_config
-from wt._core.web4d.models import model_utils, threers, threers_v2
+from wt._core.arch.models import blocks as model_blocks
+from wt._core.arch.models import config as model_config
+from wt._core.arch.models import model_utils, threers, threers_v2
 
 logger = structlog.get_logger(__name__)
 
@@ -1681,7 +1681,7 @@ class SplitTransformerProjection(nn.Module):
                 # full-resolution per-pixel predictions, so we keep the
                 # transformer head blocks unchanged but skip self.geo_proj.
                 # Mask / RGB heads still use the legacy linear projection.
-                from wt._core.web4d.models.patchhead_utils import (
+                from wt._core.arch.models.patchhead_utils import (
                     ConvHead as _ConvHead,
                     RaymapHead as _RaymapHead,
                 )

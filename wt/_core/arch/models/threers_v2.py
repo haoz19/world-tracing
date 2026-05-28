@@ -11,15 +11,15 @@ from wt._core.vendor.moge.moge_model import MoGeModel
 from torch import Tensor
 from torch.nn import functional as F
 
-from wt._core import torchcam
+from wt._core import camera as _camera
 from wt._core.components import nnn
 from wt._core.diffusion import constants
 from wt._core.models.wan_video import layers as wan_video_layers
 from wt._core.splat.utils import embedding
 from wt._core.utils import torch_utils
-from wt._core.web4d.models import blocks, head_utils, model_utils, patchhead_utils
-from wt._core.web4d.models import config as model_config
-from wt._core.web4d.utils import geometry_utils
+from wt._core.arch.models import blocks, head_utils, model_utils, patchhead_utils
+from wt._core.arch.models import config as model_config
+from wt._core.arch.utils import geometry_utils
 
 logger = structlog.get_logger(__name__)
 
@@ -582,7 +582,7 @@ class ThreersV2(nn.Module):
     def encode_conditioning(
         self,
         img: Float[Tensor, "b v c h w"],
-        camera: torchcam.Camera | None = None,
+        camera: _camera.Camera | None = None,
     ) -> tuple[Float[Tensor, "b v p 2"], Float[Tensor, "b v p 6"] | None]:
         """
         Encode the conditioning information.
@@ -601,7 +601,7 @@ class ThreersV2(nn.Module):
                     updated_position = self.camera_scale_normalizer.apply(
                         updated_position
                     )
-                camera = torchcam.update_extrinsic(camera, position=updated_position)
+                camera = _camera.update_extrinsic(camera, position=updated_position)
                 raymap = model_utils.compute_patch_raymap(camera, self.patch_size)
                 raymap = einops.rearrange(raymap, "b v h w ... -> b v (h w) ...")
 
@@ -883,7 +883,7 @@ class ThreersV2(nn.Module):
     def project_timestep(self, t: Float[Tensor, "b"]) -> Float[Tensor, "b 1 6 d"]:
         """
         Project diffusion timestep to get timestep embedding and adaln input.
-        Adapted from src/wlt/models/wan_video/base_model.py
+        Adapted from the Wan2.1 video base-model time-embedding head.
         """
         with torch_utils.maybe_autocast(t.device, torch.float32):
             t = t * model_config.DIFFUSION_TIMESTEP_SCALE
@@ -906,7 +906,7 @@ class ThreersV2(nn.Module):
     def _forward_regression(
         self,
         img: Float[Tensor, "b v c h w"],
-        camera: torchcam.Camera | None = None,
+        camera: _camera.Camera | None = None,
     ) -> dict:
         """
         Forward pass.
@@ -1028,11 +1028,11 @@ class ThreersV2(nn.Module):
         query_position = self.index_query(query_position, query_indices)
         return query_position
 
-    def compute_raymap_query(self, camera: torchcam.Camera) -> Float[Tensor, "b s d"]:
+    def compute_raymap_query(self, camera: _camera.Camera) -> Float[Tensor, "b s d"]:
         updated_position = camera.position
         if self.use_camera_scale_normalizer:
             updated_position = self.camera_scale_normalizer.apply(updated_position)
-        camera = torchcam.update_extrinsic(camera, position=updated_position)
+        camera = _camera.update_extrinsic(camera, position=updated_position)
         query_raymap = model_utils.compute_patch_raymap(camera, 1)
         query_raymap = einops.rearrange(query_raymap, "b v h w c -> b (v h w) c")
         return query_raymap

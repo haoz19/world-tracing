@@ -1,11 +1,8 @@
-"""Inference-only slim of ``wlt.web4d.models.model_utils``.
+"""Slim helpers used by ``MultilayerXYZModel`` and its ``ThreersV2`` base.
 
-Only the helpers actually exercised by ``MultilayerXYZModel`` and its
-``ThreersV2`` base class on the inference path are kept.  The original
-module also contained training-only utilities (gaussian merging,
-camera-solve, splat conversion, distributed memory stats, ...) that pulled
-in ``wlt.{pytree,splat,torchcam,engine.profiling}`` and ``torch_scatter``;
-those are dropped.
+Training-only utilities (gaussian merging, camera-solve, splat conversion,
+distributed memory stats, ...) are intentionally dropped from the release
+build.
 """
 
 from __future__ import annotations

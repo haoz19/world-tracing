@@ -17,7 +17,7 @@ from wt._core.vendor.moge.utils.wrap_module import (
 from torch import nn
 from torch.nn import functional as F
 
-from wt._core import wfile, wpath
+from wt._core import file_io, path_utils
 
 logger = structlog.get_logger(__name__)
 
@@ -429,12 +429,12 @@ class MoGeModel(nn.Module):
                     f"Unsupported model: {model_name}. Only 'vitl' is supported."
                 )
             else:
-                zoo_dir = wpath.ensure_pathlike(MODEL_ZOO_DIR)
+                zoo_dir = path_utils.ensure_pathlike(MODEL_ZOO_DIR)
                 model_config = zoo_dir / f"moge-{model_name}-config.json"
                 model_weights = zoo_dir / f"moge-{model_name}.safetensors"
 
-        model_config = wpath.ensure_pathlike(model_config)
-        model_weights = wpath.ensure_pathlike(model_weights)
+        model_config = path_utils.ensure_pathlike(model_config)
+        model_weights = path_utils.ensure_pathlike(model_weights)
 
         # Try cache path first if provided (cache_path is a directory)
         if cache_path is not None:
@@ -479,18 +479,16 @@ class MoGeModel(nn.Module):
                     error=str(e),
                 )
 
-        # Load the model config from default path.
-        with wfile.cache_remote_path(model_config).open("r") as f:
+        with file_io.cache_remote_path(model_config).open("r") as f:
             model_config_dict = json.load(f)
             if model_kwargs is not None:
                 model_config_dict.update(model_kwargs)
 
-        # Load from default path
         logger.info(
             "load_models_code_path: Loading MoGe from default path",
             weights_path=str(model_weights),
         )
-        local_weights_path = wfile.cache_remote_path(model_weights)
+        local_weights_path = file_io.cache_remote_path(model_weights)
         with safetensors.safe_open(local_weights_path, framework="pt") as weights:
             state_dict = {k: weights.get_tensor(k) for k in weights.keys()}  # noqa: SIM118
 

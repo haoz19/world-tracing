@@ -1,14 +1,10 @@
-"""Minimal inference-only shim of ``wlt.models.wan_video.layers``.
+"""Tiny set of Wan2.1-style helpers used by the multilayer-geometry model.
 
-The original module is ~600 lines and pulls in flash-attention, kv-caching,
-pytree, and various Wan2.1 utilities that are only relevant for the Wan
-video model itself.  Our multilayer-geometry model only uses two helpers:
+Only two helpers are needed:
 
 * :func:`wan_init_linear` -- linear weight init following Wan2.1
 * :func:`sinusoidal_embedding_1d` -- 1D sinusoidal positional embedding for
   diffusion timesteps
-
-so we reimplement just those here.
 """
 
 from __future__ import annotations

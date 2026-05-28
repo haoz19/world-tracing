@@ -1,10 +1,10 @@
-"""Inference-only shim for ``wlt.components.nnn``.
+"""Thin inference-only wrapper around ``torch.nn``.
 
-The original module is a thin wrapper around ``torch.nn`` that exposes extra
-training-time hyperparameters (lr, weight_decay, muon, fp8).  For pure
-inference we only need the underlying ``nn.Linear`` / ``nn.LayerNorm``
-behaviour; the extra kwargs are silently accepted and dropped so that loading
-state-dicts produced by the original ``nnn.Linear`` modules works unchanged.
+The training-time variant exposed extra hyperparameters (lr, weight_decay,
+muon, fp8) on each module.  For pure inference we only need the underlying
+``nn.Linear`` / ``nn.LayerNorm`` behaviour; the extra kwargs are silently
+accepted and dropped so that loading state-dicts produced by the
+training-time modules works unchanged.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ def _strip_kwargs(kwargs: dict) -> dict:
 
 
 class Linear(nn.Linear):
-    """Drop-in replacement for ``wlt.components.nnn.Linear`` (inference-only)."""
+    """Drop-in inference replacement for the training-time ``Linear`` module."""
 
     def __init__(self, *args, **kwargs):
         kwargs = _strip_kwargs(dict(kwargs))
@@ -36,7 +36,7 @@ class Linear(nn.Linear):
 
 
 class LayerNorm(nn.LayerNorm):
-    """Drop-in replacement for ``wlt.components.nnn.LayerNorm`` (inference-only)."""
+    """Drop-in inference replacement for the training-time ``LayerNorm`` module."""
 
     def __init__(self, *args, **kwargs):
         kwargs = _strip_kwargs(dict(kwargs))

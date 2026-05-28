@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from wt._core.web4d.kernels import rep_conv
+from wt._core.arch.kernels import rep_conv
 
 from .head_act import activate_head
 from .utils import create_uv_grid, position_grid_to_embed

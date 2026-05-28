@@ -6,7 +6,7 @@
 
 import torch
 
-from wt._core.web4d.utils import geometry_utils
+from wt._core.arch.utils import geometry_utils
 
 
 def quat_to_mat(quaternions: torch.Tensor) -> torch.Tensor:
