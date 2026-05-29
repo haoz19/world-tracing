@@ -12,7 +12,7 @@ from torch import Tensor
 from torch.nn import functional as F
 
 from wt._core import camera as _camera
-from wt._core.components import nnn
+from wt._core.components import nn_layers
 from wt._core.diffusion import constants
 from wt._core.models.wan_video import layers as wan_video_layers
 from wt._core.splat.utils import embedding
@@ -24,9 +24,11 @@ from wt._core.arch.utils import geometry_utils
 logger = structlog.get_logger(__name__)
 
 
-class ThreersV2(nn.Module):
-    """
-    V2 version of dust3r/vggt style 3d reconstruction model.
+class MultilayerBackbone(nn.Module):
+    """Transformer backbone for multilayer geometry diffusion.
+
+    A dust3r / vggt style encoder-decoder used as the denoising network
+    inside :class:`wt.model.MultilayerXYZModel`.
     """
 
     def __init__(
@@ -180,13 +182,13 @@ class ThreersV2(nn.Module):
         Build the projections for diffusion model.
         """
         self.time_embedding = nn.Sequential(
-            nnn.Linear(self.t_embed_channels, self.decoder_embed_dim),
+            nn_layers.Linear(self.t_embed_channels, self.decoder_embed_dim),
             nn.SiLU(),
-            nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
+            nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
         )
         self.time_projection = nn.Sequential(
             nn.SiLU(),
-            nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim * 6),
+            nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim * 6),
         )
         if self.model_type == "diffusion":
             raw_input_dim = self.noise_channel * self.noise_patchify_size**2
@@ -203,33 +205,33 @@ class ThreersV2(nn.Module):
 
         if self.img_fusion_mode == "concat" or self.img_fusion_mode == "concat_nostd":
             self.pixel_projection = nn.Sequential(
-                nnn.Linear(fused_dim, self.decoder_embed_dim),
+                nn_layers.Linear(fused_dim, self.decoder_embed_dim),
                 nn.SiLU(),
-                nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
+                nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
             )
         elif self.img_fusion_mode == "group_concat":
             assert (
                 self.decoder_embed_dim % 2 == 0
             ), "decoder_embed_dim must be even for group_concat"
             self.noise_projection = nn.Sequential(
-                nnn.Linear(raw_input_dim, self.decoder_embed_dim // 2),
+                nn_layers.Linear(raw_input_dim, self.decoder_embed_dim // 2),
             )
             self.feature_projection = nn.Sequential(
-                nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim // 2),
+                nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim // 2),
             )
         else:
             raise ValueError(f"Invalid image fusion mode: {self.img_fusion_mode}")
 
         # Following WAN to initialize the time embedding.
         for m in self.time_embedding.modules():
-            if isinstance(m, nnn.Linear):
+            if isinstance(m, nn_layers.Linear):
                 nn.init.normal_(m.weight, std=0.02)
                 if m.bias is not None:
                     nn.init.zeros_(m.bias)
 
         # Following WAN to initialize the time projection.
         for m in self.time_projection.modules():
-            if isinstance(m, nnn.Linear):
+            if isinstance(m, nn_layers.Linear):
                 wan_video_layers.wan_init_linear(m)
 
     def build_encoder(self):
@@ -245,7 +247,7 @@ class ThreersV2(nn.Module):
             self.encoder.register_buffer("image_mean", moge_model.image_mean)
             self.encoder.register_buffer("image_std", moge_model.image_std)
             del moge_model
-            self.encoder.final_project = nnn.Linear(4096, self.decoder_embed_dim)
+            self.encoder.final_project = nn_layers.Linear(4096, self.decoder_embed_dim)
         elif self.encoder_model == "null":
             self.encoder = nn.Identity()
         else:
@@ -397,7 +399,7 @@ class ThreersV2(nn.Module):
             raise ValueError(f"Invalid model type: {self.model_type}")
         if self.head_mode == "linear":
             self.latents_projection = nn.Sequential(
-                nn.SiLU(), nnn.Linear(self.decoder_embed_dim, output_dim)
+                nn.SiLU(), nn_layers.Linear(self.decoder_embed_dim, output_dim)
             )
         else:
             assert (
@@ -443,17 +445,17 @@ class ThreersV2(nn.Module):
         self.query_embed = embedding.PosEmbedding(
             in_channels=query_dim, n_freqs=n_freqs, logscale=True
         )
-        self.query_token_projection = nnn.Linear(
+        self.query_token_projection = nn_layers.Linear(
             self.query_embed.out_channels, self.decoder_embed_dim
         )
         if self.use_rgb_query:
-            self.query_rgb_token_projection = nnn.Linear(
+            self.query_rgb_token_projection = nn_layers.Linear(
                 3 * self.rgb_query_patch_size**2, self.decoder_embed_dim
             )
             self.query_rgb_fusion = nn.Sequential(
-                nnn.Linear(self.decoder_embed_dim * 2, self.decoder_embed_dim),
+                nn_layers.Linear(self.decoder_embed_dim * 2, self.decoder_embed_dim),
                 nn.GELU(),
-                nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
+                nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
             )
         if self.use_noise_embed:
             self.noise_embed = embedding.PosEmbedding(
@@ -465,16 +467,16 @@ class ThreersV2(nn.Module):
             noise_embed_channel = self.noise_channel
 
         self.noise_query_fusion = nn.Sequential(
-            nnn.Linear(self.decoder_embed_dim * 2, self.decoder_embed_dim),
+            nn_layers.Linear(self.decoder_embed_dim * 2, self.decoder_embed_dim),
             nn.GELU(),
-            nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
+            nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
         )
         post_proj_noise_dim = self.decoder_embed_dim
         if self.use_noise_patch_query:
             pre_proj_noise_dim = noise_embed_channel * self.rgb_query_patch_size**2
         else:
             pre_proj_noise_dim = noise_embed_channel
-        self.query_noise_projection = nnn.Linear(
+        self.query_noise_projection = nn_layers.Linear(
             pre_proj_noise_dim, post_proj_noise_dim
         )
         if self.use_feat_interpolation:

@@ -10,7 +10,7 @@ from wt._core.vendor.vggt.layers import layer_scale
 from torch import Tensor
 from torch.nn.attention.flex_attention import flex_attention
 
-from wt._core.components import flash_attention, nnn
+from wt._core.components import flash_attention, nn_layers
 from wt._core.models.wan_video import layers as wan_video_layers
 from wt._core.utils import torch_utils
 from wt._core.arch.models import config as model_config
@@ -386,10 +386,10 @@ class CrossAttention(nn.Module):
         self.scale = head_dim**scale_factor
 
         # Separate projections for Q and KV (cross-attn)
-        self.q_proj = nnn.Linear(self.dim_q, dim_q, bias=qkv_bias)
-        self.kv_proj = nnn.Linear(self.dim_kv, self.dim_kv * 2, bias=qkv_bias)
+        self.q_proj = nn_layers.Linear(self.dim_q, dim_q, bias=qkv_bias)
+        self.kv_proj = nn_layers.Linear(self.dim_kv, self.dim_kv * 2, bias=qkv_bias)
 
-        self.proj = nnn.Linear(self.dim_kv, self.dim_kv)
+        self.proj = nn_layers.Linear(self.dim_kv, self.dim_kv)
         self.zero_init_last = zero_init_last
         if zero_init_last:
             nn.init.zeros_(self.proj.weight)
@@ -402,13 +402,13 @@ class CrossAttention(nn.Module):
 
         self.use_qk_norm = use_qk_norm
         if use_qk_norm:
-            self.q_norm = nnn.LayerNorm(self.head_dim)
-            self.k_norm = nnn.LayerNorm(self.head_dim)
+            self.q_norm = nn_layers.LayerNorm(self.head_dim)
+            self.k_norm = nn_layers.LayerNorm(self.head_dim)
 
         # apply gating to sdpa output: https://arxiv.org/pdf/2505.06708
         self.use_gated_attn = use_gated_attn
         if use_gated_attn:
-            self.gate_proj = nnn.Linear(self.dim_q, self.dim_q)
+            self.gate_proj = nn_layers.Linear(self.dim_q, self.dim_q)
 
     def forward(
         self,
@@ -670,26 +670,26 @@ class TimestepProjection(nn.Module):
         self.adaln_channels = adaln_channels
 
         self.time_embedding = nn.Sequential(
-            nnn.Linear(self.t_embed_channels, self.decoder_embed_dim),
+            nn_layers.Linear(self.t_embed_channels, self.decoder_embed_dim),
             nn.SiLU(),
-            nnn.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
+            nn_layers.Linear(self.decoder_embed_dim, self.decoder_embed_dim),
         )
         self.time_projection = nn.Sequential(
             nn.SiLU(),
-            nnn.Linear(
+            nn_layers.Linear(
                 self.decoder_embed_dim, self.decoder_embed_dim * self.adaln_channels
             ),
         )
         # Following WAN to initialize the time embedding.
         for m in self.time_embedding.modules():
-            if isinstance(m, nnn.Linear):
+            if isinstance(m, nn_layers.Linear):
                 nn.init.normal_(m.weight, std=0.02)
                 if m.bias is not None:
                     nn.init.zeros_(m.bias)
 
         # Following WAN to initialize the time projection.
         for m in self.time_projection.modules():
-            if isinstance(m, nnn.Linear):
+            if isinstance(m, nn_layers.Linear):
                 wan_video_layers.wan_init_linear(m)
 
     def forward(self, t: Float[Tensor, "b"]) -> Float[Tensor, "b 1 x d"]:

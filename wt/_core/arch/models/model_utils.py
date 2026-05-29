@@ -1,4 +1,4 @@
-"""Slim helpers used by ``MultilayerXYZModel`` and its ``ThreersV2`` base.
+"""Slim helpers used by ``MultilayerXYZModel`` and its ``MultilayerBackbone``.
 
 Training-only utilities (gaussian merging, camera-solve, splat conversion,
 distributed memory stats, ...) are intentionally dropped from the release

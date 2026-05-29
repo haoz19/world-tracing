@@ -14,7 +14,7 @@ from jaxtyping import Float
 from torch import Tensor
 from torch.nn import functional as F
 
-from wt._core.components import nnn
+from wt._core.components import nn_layers
 from wt._core.splat.utils import embedding
 from wt._core.arch.models import blocks
 
@@ -236,9 +236,9 @@ class PerceiverHead(nn.Module):
         self.posenc = embedding.PosEmbedding(
             in_channels=2, n_freqs=n_freqs, logscale=True
         )
-        self.query_proj = nnn.Linear(self.posenc.out_channels, dim_hidden)
-        self.kv_proj1 = nnn.Linear(dim_in, dim_hidden)
-        self.kv_proj2 = nnn.Linear(dim_hidden + self.posenc.out_channels, dim_hidden)
+        self.query_proj = nn_layers.Linear(self.posenc.out_channels, dim_hidden)
+        self.kv_proj1 = nn_layers.Linear(dim_in, dim_hidden)
+        self.kv_proj2 = nn_layers.Linear(dim_hidden + self.posenc.out_channels, dim_hidden)
         self.blocks = nn.ModuleList(
             [
                 blocks.DecoderBlockCA(
@@ -254,7 +254,7 @@ class PerceiverHead(nn.Module):
                 for _ in range(num_blocks)
             ]
         )
-        self.final_proj = nnn.Linear(dim_hidden, dim_out)
+        self.final_proj = nn_layers.Linear(dim_hidden, dim_out)
         self.q_posec_cache = {}
         self.kv_posec_cache = {}
 
@@ -424,15 +424,15 @@ class PatchnerfHead(nn.Module):
         self.posenc = embedding.PosEmbedding(
             in_channels=2, n_freqs=self.n_freqs, logscale=True
         )
-        self.query_proj = nnn.Linear(self.posenc.out_channels, self.dim_hidden)
-        self.kv_proj = nnn.Linear(dim_in, self.dim_hidden)
+        self.query_proj = nn_layers.Linear(self.posenc.out_channels, self.dim_hidden)
+        self.kv_proj = nn_layers.Linear(dim_in, self.dim_hidden)
         blk = NerfBlock(
             hidden_size_s=self.dim_hidden,
             hidden_size_x=self.dim_hidden,
             norm_layer=norm_layer,
         )
         self.blocks = nn.ModuleList([deepcopy(blk) for _ in range(self.num_blocks)])
-        self.final_proj = nnn.Linear(self.dim_hidden, self.dim_out)
+        self.final_proj = nn_layers.Linear(self.dim_hidden, self.dim_out)
         self.q_posec_cache = {}
 
     def build_queries(
@@ -582,7 +582,7 @@ class LinearHead(nn.Module):
         self.patch_size = patch_size
         self.attn_mode = attn_mode
 
-        self.token_proj = nnn.Linear(dim_in, dim_hidden)
+        self.token_proj = nn_layers.Linear(dim_in, dim_hidden)
         blk = blocks.DecoderBlockSA(
             dim_hidden,
             num_heads=dim_hidden // 64,
@@ -593,7 +593,7 @@ class LinearHead(nn.Module):
             qkv_bias=qkv_bias,
         )
         self.blocks = nn.ModuleList([deepcopy(blk) for _ in range(self.num_blocks)])
-        self.project = nnn.Linear(
+        self.project = nn_layers.Linear(
             dim_hidden, self.patch_size * self.patch_size * dim_out
         )
 

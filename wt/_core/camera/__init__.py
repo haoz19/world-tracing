@@ -17,7 +17,7 @@ import torch
 class Camera:
     """Placeholder dataclass used purely as a type annotation.
 
-    ``MultilayerXYZModel`` and the underlying ``ThreersV2`` only consume
+    ``MultilayerXYZModel`` and the underlying ``MultilayerBackbone`` only consume
     ``Camera`` objects when ``use_raymap=True`` or ``use_camera_head=True``,
     neither of which is enabled in the release configs.
     """

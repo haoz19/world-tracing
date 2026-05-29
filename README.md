@@ -286,7 +286,7 @@ scene mode or explicit ablations).
 
 ```
 wt/                       ← installable Python package
-├── model.py              ← MultilayerXYZModel (configurable wrapper around ThreersV2)
+├── model.py              ← MultilayerXYZModel (configurable wrapper around MultilayerBackbone)
 ├── inference.py          ← inference_diffusion / inference_diffusion_multiview / inference_video_diffusion
 ├── sampling.py           ← Euler ODE flow-matching sampler (replaces FMLossWrapper)
 ├── data.py               ← Image loaders (BiRefNet auto-matting), preprocessing, video clip

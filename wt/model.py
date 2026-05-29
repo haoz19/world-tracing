@@ -1,10 +1,11 @@
 """
 Multilayer XYZ Diffusion Model.
 
-This is a thin wrapper around `ThreersV2` to reuse the original diffusion
-architecture and `FMLossWrapper` training logic with minimal changes.
-Mask is modeled as an extra diffusion channel (xyz + mask_logit), and
-layer order is encoded with a learned layer embedding.
+This is a thin wrapper around :class:`MultilayerBackbone` to reuse the
+original diffusion architecture and ``FMLossWrapper`` training logic
+with minimal changes.  Mask is modeled as an extra diffusion channel
+(xyz + mask_logit), and layer order is encoded with a learned layer
+embedding.
 """
 
 import os
@@ -23,7 +24,8 @@ from wt._core.diffusion import constants
 from wt._core.engine import activation_checkpoint
 from wt._core.arch.models import blocks as model_blocks
 from wt._core.arch.models import config as model_config
-from wt._core.arch.models import model_utils, threers, threers_v2
+from wt._core.arch.models import backbone as _backbone
+from wt._core.arch.models import model_utils
 
 logger = structlog.get_logger(__name__)
 
@@ -257,7 +259,7 @@ class TemporalAttentionBlock(nn.Module):
     the frozen single-frame behaviour.
 
     Only active when ``num_time > 1``; for single-frame inference it is
-    never called (see ``ThreersV2Patched.decode_to_output_tokens``).
+    never called (see ``MultilayerBackbonePatched.decode_to_output_tokens``).
     """
 
     def __init__(
@@ -315,8 +317,8 @@ class TemporalAttentionBlock(nn.Module):
         return x
 
 
-class ThreersV2Patched(threers_v2.ThreersV2):
-    """ThreersV2 with _forward_denoising patched to allow img_tokens during
+class MultilayerBackbonePatched(_backbone.MultilayerBackbone):
+    """:class:`MultilayerBackbone` with _forward_denoising patched to allow img_tokens during
     training and optional dense layer-embedding injection in the decoder.
 
     Overrides:
@@ -354,9 +356,9 @@ class ThreersV2Patched(threers_v2.ThreersV2):
                 self.encoder.register_buffer("image_mean", moge_model.image_mean)
                 self.encoder.register_buffer("image_std", moge_model.image_std)
                 del moge_model
-                from wt._core.components import nnn
+                from wt._core.components import nn_layers
 
-                self.encoder.final_project = nnn.Linear(4096, self.decoder_embed_dim)
+                self.encoder.final_project = nn_layers.Linear(4096, self.decoder_embed_dim)
                 return
         super().build_encoder()
 
@@ -750,7 +752,7 @@ class ThreersV2Patched(threers_v2.ThreersV2):
         cross-attention to image features, and AR context cross-attention.
 
         When all optional features are ``None`` the behaviour is identical
-        to the upstream ``ThreersV2.decode_to_output_tokens``.
+        to the upstream ``MultilayerBackbone.decode_to_output_tokens``.
 
         r80 multi-view path:
           When ``num_view > 1``, the caller folds V into the batch dim
@@ -1520,7 +1522,7 @@ class InputContextAttention(nn.Module):
 
 
 class SplitLatentsProjection(nn.Module):
-    """Drop-in replacement for ThreersV2.latents_projection with separate heads.
+    """Drop-in replacement for MultilayerBackbone.latents_projection with separate heads.
 
     The original latents_projection is a single Linear(D, 4*P²) that predicts
     all 4 channels jointly.  This version uses independent linear heads for
@@ -1531,7 +1533,7 @@ class SplitLatentsProjection(nn.Module):
       - depth mode:  [depth, -, -] where channels 1-2 are not supervised
       - xyz mode:    [x, y, z]     where all 3 channels are supervised
 
-    Usage: after constructing ThreersV2, replace its latents_projection:
+    Usage: after constructing MultilayerBackbone, replace its latents_projection:
         model.net.latents_projection = SplitLatentsProjection(D, noise_patchify_size)
     """
 
@@ -1547,7 +1549,7 @@ class SplitLatentsProjection(nn.Module):
         Args:
             x: [..., P, D]  (decoder output tokens)
         Returns:
-            [..., P, 4 * num_pixels]  matching ThreersV2 latents_projection output shape
+            [..., P, 4 * num_pixels]  matching MultilayerBackbone latents_projection output shape
 
         unpatchify_image rearranges the last dim as ``(ph pw d)`` where d=4,
         so channels must be interleaved per-pixel: [geo0, geo1, geo2, mask] for
@@ -1637,7 +1639,7 @@ class SplitTransformerProjection(nn.Module):
             )
 
         blk_cls = (
-            model_blocks.DecoderBlockDiT if head_timestep else threers.DecoderBlockSA
+            model_blocks.DecoderBlockDiT if head_timestep else model_blocks.DecoderBlockSA
         )
 
         def _make_blocks(n):
@@ -2115,10 +2117,10 @@ class SplitTransformerProjection(nn.Module):
 
 class MultilayerXYZModel(nn.Module):
     """
-    Wrapper around ThreersV2 for multilayer XYZ diffusion.
+    Wrapper around :class:`MultilayerBackbone` for multilayer XYZ diffusion.
 
     The multilayer dimension is treated as the "view" dimension expected by
-    ThreersV2/FMLossWrapper. The input RGB is repeated across layers to match
+    MultilayerBackbone / FMLossWrapper. The input RGB is repeated across layers to match
     this dimension during training.
     """
 
@@ -2327,7 +2329,7 @@ class MultilayerXYZModel(nn.Module):
         self.cfm_noise_type = cfm_noise_type
 
         encoder_model = "moge" if use_pretrained_encoder else "null"
-        self.net = ThreersV2Patched(
+        self.net = MultilayerBackbonePatched(
             model_type="diffusion",
             img_fusion_mode="group_concat",
             fuse_raw_rgb=True,
@@ -2543,7 +2545,7 @@ class MultilayerXYZModel(nn.Module):
                     f"SplitTransformerProjection: {', '.join(wrapped_names)}"
                 )
         else:
-            logger.info("Using shared latents_projection (original ThreersV2 head).")
+            logger.info("Using shared latents_projection (original MultilayerBackbone head).")
 
         # --- Cross-attention mode: replace even decoder blocks, add noise MLP ---
         if use_cross_attn and layer_embed_mode == "input_only":
@@ -3233,7 +3235,7 @@ class MultilayerXYZModel(nn.Module):
 
         # --- Plumb temporal blocks through conditioning (clip mode only) ---
         # Temporal blocks live on MultilayerXYZModel (this class) while the
-        # decoder lives on self.net (ThreersV2Patched).  decode_to_output_tokens
+        # decoder lives on self.net (MultilayerBackbonePatched).  decode_to_output_tokens
         # reads them from conditioning["_temporal_blocks"] /
         # conditioning["_temporal_insert_indices"].  When num_time == 1 or
         # use_temporal_blocks is False, both remain None and the new decoder
