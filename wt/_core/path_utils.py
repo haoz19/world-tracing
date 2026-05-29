@@ -1,7 +1,7 @@
 """Lightweight path helpers used by the vendored MoGe loader.
 
-Only ``ensure_pathlike`` is used at this layer (by vendored MoGe) — and the
-inference release never exercises the GCS/S3 download paths (we always
+Only ``ensure_pathlike`` is used at this layer (by vendored MoGe) — the
+inference release never exercises any remote download paths (we always
 instantiate ``MoGeModel`` with random weights and then load our own
 checkpoint).  This stub just normalises strings to ``pathlib.Path``.
 """
@@ -23,8 +23,4 @@ def ensure_pathlike(path: Any, **_kwargs) -> pathlib.Path:
     raise ValueError(f"Input {path=} is not PathLike!")
 
 
-class WPath(pathlib.PosixPath):
-    """Path subclass kept for source compatibility with older import sites."""
-
-
-__all__ = ["ensure_pathlike", "WPath"]
+__all__ = ["ensure_pathlike"]

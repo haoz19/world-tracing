@@ -1,7 +1,7 @@
 """Local Rerun visualisation for predicted multilayer point clouds.
 
 Outputs an ``.rrd`` file you can open with ``rerun /path/to/foo.rrd`` or
-stream live with ``rr.serve_grpc()``.  No GCS / S3 upload, no HTML packaging
+stream live with ``rr.serve_grpc()``.  No remote upload, no HTML packaging
 -- just a self-contained record file you can ship with the release.
 """
 

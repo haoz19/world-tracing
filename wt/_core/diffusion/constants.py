@@ -69,7 +69,7 @@ UMT5XXL_TXT_EMBED_KEY = "umt5xxl_txt_embed"
 LOSS_MASK_KEY = "loss_mask"
 STYLE_STRENGTH_KEY = "style_strength"
 
-# TODO(lyzhu): Delete after nbm models are fully deprecated.
+# TODO: Delete after legacy models are fully deprecated.
 POSE_SCALE_KEY = "pose_scale"
 ORIGINAL_IMAGE_SIZE_KEY = "original_image_size"
 CROP_COORDS_TOP_LEFT_KEY = "crop_coords_top_left"
