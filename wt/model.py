@@ -320,7 +320,9 @@ class ThreersV2Patched(threers_v2.ThreersV2):
     training and optional dense layer-embedding injection in the decoder.
 
     Overrides:
-      - build_encoder: loads MoGe weights from local s3_mount or S3 to avoid GCS.
+      - build_encoder: optionally warm-starts MoGe weights from a local
+        directory (env var ``MOGE_LOCAL_ZOO``).  Inference does not need
+        this -- the encoder state is restored from the release checkpoint.
       - _forward_denoising: bypasses the upstream ``not self.training``
         assertion when ``img_tokens`` is supplied via conditioning, and
         passes ``layer_embed_info`` through to the decoder.

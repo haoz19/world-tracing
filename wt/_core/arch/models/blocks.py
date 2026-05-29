@@ -114,7 +114,7 @@ class Attention(nn.Module):
             )
 
         if attn_temperature_tuning:
-            # TODO (gengshan): remove hardcoded value
+            # TODO: remove hardcoded value
             floor_scale = 1536  # max training tokens
             attn_scale = 1.0  # lamma4 uses 0.1
             seq_positions = torch.arange(

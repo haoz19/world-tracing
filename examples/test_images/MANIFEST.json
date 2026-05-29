@@ -1,5 +1,5 @@
 {
-  "generated_by": "multilayer_geometry_release_inference/_collect_demo_samples.py",
+  "generated_by": "examples/_collect_demo_samples.py",
   "num_frames_per_dynamic": 16,
   "object": [
     {
@@ -7,240 +7,210 @@
       "label": "Obj014 Leather Briefcase",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj014_leather_briefcase.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj014_leather_briefcase/input/obj014_leather_briefcase.png"
+      "path": "examples/test_images/object/obj014_leather_briefcase.png"
     },
     {
       "stem": "obj015_wooden_train",
       "label": "Obj015 Wooden Train",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj015_wooden_train.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj015_wooden_train/input/obj015_wooden_train.png"
+      "path": "examples/test_images/object/obj015_wooden_train.png"
     },
     {
       "stem": "obj063_trex_dinosaur",
       "label": "Obj063 Trex Dinosaur",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj063_trex_dinosaur.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj063_trex_dinosaur/input/obj063_trex_dinosaur.png"
+      "path": "examples/test_images/object/obj063_trex_dinosaur.png"
     },
     {
       "stem": "obj072_power_armor",
       "label": "Obj072 Power Armor",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj072_power_armor.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj072_power_armor/input/obj072_power_armor.png"
+      "path": "examples/test_images/object/obj072_power_armor.png"
     },
     {
       "stem": "obj083_chibi_swordsman",
       "label": "Obj083 Chibi Swordsman",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj083_chibi_swordsman.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj083_chibi_swordsman/input/obj083_chibi_swordsman.png"
+      "path": "examples/test_images/object/obj083_chibi_swordsman.png"
     },
     {
       "stem": "obj101_crimson_battle_mech",
       "label": "Obj101 Crimson Battle Mech",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj101_crimson_battle_mech.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj101_crimson_battle_mech/input/obj101_crimson_battle_mech.png"
+      "path": "examples/test_images/object/obj101_crimson_battle_mech.png"
     },
     {
       "stem": "obj107_cyberpunk_exoskeleton",
       "label": "Obj107 Cyberpunk Exoskeleton",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj107_cyberpunk_exoskeleton.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj107_cyberpunk_exoskeleton/input/obj107_cyberpunk_exoskeleton.png"
+      "path": "examples/test_images/object/obj107_cyberpunk_exoskeleton.png"
     },
     {
       "stem": "obj120_sea_serpent_leviathan",
       "label": "Obj120 Sea Serpent Leviathan",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj120_sea_serpent_leviathan.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj120_sea_serpent_leviathan/input/obj120_sea_serpent_leviathan.png"
+      "path": "examples/test_images/object/obj120_sea_serpent_leviathan.png"
     },
     {
       "stem": "obj123_jade_dragon_curio",
       "label": "Obj123 Jade Dragon Curio",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj123_jade_dragon_curio.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj123_jade_dragon_curio/input/obj123_jade_dragon_curio.png"
+      "path": "examples/test_images/object/obj123_jade_dragon_curio.png"
     },
     {
       "stem": "obj138_retro_camper_van",
       "label": "Obj138 Retro Camper Van",
       "kind": "single",
       "tier": "featured",
-      "path": "examples/test_images/object/obj138_retro_camper_van.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj138_retro_camper_van/input/obj138_retro_camper_van.png"
+      "path": "examples/test_images/object/obj138_retro_camper_van.png"
     },
     {
       "stem": "multi001_chess_set_marble",
       "label": "Multi001 Chess Set Marble",
       "kind": "multi",
       "tier": "featured",
-      "path": "examples/test_images/object/multi001_chess_set_marble.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/multi001_chess_set_marble/input/multi001_chess_set_marble.png"
+      "path": "examples/test_images/object/multi001_chess_set_marble.png"
     },
     {
       "stem": "multi006_jewellery_flatlay_layout",
       "label": "Multi006 Jewellery Flatlay Layout",
       "kind": "multi",
       "tier": "featured",
-      "path": "examples/test_images/object/multi006_jewellery_flatlay_layout.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/multi006_jewellery_flatlay_layout/input/multi006_jewellery_flatlay_layout.png"
+      "path": "examples/test_images/object/multi006_jewellery_flatlay_layout.png"
     },
     {
       "stem": "obj008_lowpoly_tree",
       "label": "Obj008 Lowpoly Tree",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj008_lowpoly_tree.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj008_lowpoly_tree/input/obj008_lowpoly_tree.png"
+      "path": "examples/test_images/object/obj008_lowpoly_tree.png"
     },
     {
       "stem": "obj025_cartoon_dino",
       "label": "Obj025 Cartoon Dino",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj025_cartoon_dino.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj025_cartoon_dino/input/obj025_cartoon_dino.png"
+      "path": "examples/test_images/object/obj025_cartoon_dino.png"
     },
     {
       "stem": "obj035_cartoon_icecream",
       "label": "Obj035 Cartoon Icecream",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj035_cartoon_icecream.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj035_cartoon_icecream/input/obj035_cartoon_icecream.png"
+      "path": "examples/test_images/object/obj035_cartoon_icecream.png"
     },
     {
       "stem": "obj040_leather_armchair",
       "label": "Obj040 Leather Armchair",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj040_leather_armchair.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj040_leather_armchair/input/obj040_leather_armchair.png"
+      "path": "examples/test_images/object/obj040_leather_armchair.png"
     },
     {
       "stem": "obj044_anime_sneaker",
       "label": "Obj044 Anime Sneaker",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj044_anime_sneaker.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj044_anime_sneaker/input/obj044_anime_sneaker.png"
+      "path": "examples/test_images/object/obj044_anime_sneaker.png"
     },
     {
       "stem": "obj062_bengal_tiger",
       "label": "Obj062 Bengal Tiger",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj062_bengal_tiger.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj062_bengal_tiger/input/obj062_bengal_tiger.png"
+      "path": "examples/test_images/object/obj062_bengal_tiger.png"
     },
     {
       "stem": "obj067_triceratops",
       "label": "Obj067 Triceratops",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj067_triceratops.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj067_triceratops/input/obj067_triceratops.png"
+      "path": "examples/test_images/object/obj067_triceratops.png"
     },
     {
       "stem": "obj069_pixar_dwarf",
       "label": "Obj069 Pixar Dwarf",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj069_pixar_dwarf.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj069_pixar_dwarf/input/obj069_pixar_dwarf.png"
+      "path": "examples/test_images/object/obj069_pixar_dwarf.png"
     },
     {
       "stem": "obj070_red_fox",
       "label": "Obj070 Red Fox",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj070_red_fox.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj070_red_fox/input/obj070_red_fox.png"
+      "path": "examples/test_images/object/obj070_red_fox.png"
     },
     {
       "stem": "obj071_griffin",
       "label": "Obj071 Griffin",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj071_griffin.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj071_griffin/input/obj071_griffin.png"
+      "path": "examples/test_images/object/obj071_griffin.png"
     },
     {
       "stem": "obj085_pterodactyl",
       "label": "Obj085 Pterodactyl",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj085_pterodactyl.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj085_pterodactyl/input/obj085_pterodactyl.png"
+      "path": "examples/test_images/object/obj085_pterodactyl.png"
     },
     {
       "stem": "obj087_industrial_mech",
       "label": "Obj087 Industrial Mech",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj087_industrial_mech.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj087_industrial_mech/input/obj087_industrial_mech.png"
+      "path": "examples/test_images/object/obj087_industrial_mech.png"
     },
     {
       "stem": "obj110_aqua_diving_mech",
       "label": "Obj110 Aqua Diving Mech",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj110_aqua_diving_mech.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj110_aqua_diving_mech/input/obj110_aqua_diving_mech.png"
+      "path": "examples/test_images/object/obj110_aqua_diving_mech.png"
     },
     {
       "stem": "obj122_bronze_athletic_discobolus",
       "label": "Obj122 Bronze Athletic Discobolus",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj122_bronze_athletic_discobolus.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj122_bronze_athletic_discobolus/input/obj122_bronze_athletic_discobolus.png"
+      "path": "examples/test_images/object/obj122_bronze_athletic_discobolus.png"
     },
     {
       "stem": "obj125_bronze_lion_guardian",
       "label": "Obj125 Bronze Lion Guardian",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj125_bronze_lion_guardian.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj125_bronze_lion_guardian/input/obj125_bronze_lion_guardian.png"
+      "path": "examples/test_images/object/obj125_bronze_lion_guardian.png"
     },
     {
       "stem": "obj141_brass_telescope_orrery",
       "label": "Obj141 Brass Telescope Orrery",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj141_brass_telescope_orrery.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj141_brass_telescope_orrery/input/obj141_brass_telescope_orrery.png"
+      "path": "examples/test_images/object/obj141_brass_telescope_orrery.png"
     },
     {
       "stem": "obj147_crystal_palace_glass",
       "label": "Obj147 Crystal Palace Glass",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj147_crystal_palace_glass.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj147_crystal_palace_glass/input/obj147_crystal_palace_glass.png"
+      "path": "examples/test_images/object/obj147_crystal_palace_glass.png"
     },
     {
       "stem": "obj149_hand_painted_kokeshi_set",
       "label": "Obj149 Hand Painted Kokeshi Set",
       "kind": "single",
       "tier": "more",
-      "path": "examples/test_images/object/obj149_hand_painted_kokeshi_set.png",
-      "source_path": "/mnt/filestore/users/hao/auto-experiments/video_static/results/generated_object/obj149_hand_painted_kokeshi_set/input/obj149_hand_painted_kokeshi_set.png"
+      "path": "examples/test_images/object/obj149_hand_painted_kokeshi_set.png"
     }
   ],
   "scene": [
@@ -249,7 +219,6 @@
       "label": "Brooklyn Apartment",
       "tier": "featured",
       "path": "examples/test_images/scene/scene_outdoor_14_brooklyn_apartment__seed61.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_14_brooklyn_apartment.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -257,7 +226,6 @@
       "label": "Master Bedroom",
       "tier": "featured",
       "path": "examples/test_images/scene/scene_indoor_02_master_bedroom__seed42.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_02_master_bedroom.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -265,7 +233,6 @@
       "label": "Modern Living Room",
       "tier": "featured",
       "path": "examples/test_images/scene/scene_indoor_01_modern_living_room__seed42.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_01_modern_living_room.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -273,7 +240,6 @@
       "label": "Victorian Houses",
       "tier": "featured",
       "path": "examples/test_images/scene/scene_outdoor_06_victorian_houses__seed57.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_06_victorian_houses.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -281,7 +247,6 @@
       "label": "Amsterdam Canal",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_25_amsterdam_canal__seed66.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_25_amsterdam_canal.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -289,7 +254,6 @@
       "label": "Art Studio",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_15_art_studio__seed49.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_15_art_studio.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -297,7 +261,6 @@
       "label": "Chinese Courtyard",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_07_chinese_courtyard__seed57.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_07_chinese_courtyard.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -305,7 +268,6 @@
       "label": "Dining Room",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_04_dining_room__seed43.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_04_dining_room.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -313,7 +275,6 @@
       "label": "Gothic Cathedral",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_10_gothic_cathedral__seed59.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_10_gothic_cathedral.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -321,7 +282,6 @@
       "label": "Japanese Street",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_11_japanese_street__seed59.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_11_japanese_street.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -329,7 +289,6 @@
       "label": "Luxury Bathroom",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_06_luxury_bathroom__seed44.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_06_luxury_bathroom.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -337,7 +296,6 @@
       "label": "Mediterranean Village",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_09_mediterranean_village__seed58.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_09_mediterranean_village.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -345,7 +303,6 @@
       "label": "Modern Kitchen",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_03_modern_kitchen__seed43.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_03_modern_kitchen.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -353,7 +310,6 @@
       "label": "Mosque Courtyard",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_18_mosque_courtyard__seed63.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_18_mosque_courtyard.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -361,7 +317,6 @@
       "label": "Mountain Lodge",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_22_mountain_lodge__seed65.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_22_mountain_lodge.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -369,7 +324,6 @@
       "label": "Music Room",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_22_music_room__seed52.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_22_music_room.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -377,7 +331,6 @@
       "label": "Parisian Building",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_08_parisian_building__seed58.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_08_parisian_building.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -385,7 +338,6 @@
       "label": "Rustic Cabin",
       "tier": "more",
       "path": "examples/test_images/scene/scene_indoor_25_rustic_cabin__seed54.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_indoor_25_rustic_cabin.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -393,7 +345,6 @@
       "label": "Skyscraper Downtown",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_12_skyscraper_downtown__seed60.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_12_skyscraper_downtown.png",
       "alpha_is_sky_mask": true
     },
     {
@@ -401,7 +352,6 @@
       "label": "Urban Park",
       "tier": "more",
       "path": "examples/test_images/scene/scene_outdoor_20_urban_park__seed64.png",
-      "source_image": "/mnt/filestore/users/hao/code/test_images/generated_scene_sky_masked/scene_outdoor_20_urban_park.png",
       "alpha_is_sky_mask": true
     }
   ],
@@ -413,7 +363,6 @@
       "path": "examples/test_images/dynamic/davis__camel",
       "num_frames": 16,
       "source_total_frames": 90,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/camel/frames",
       "source_rel": "davis/camel/r76_seed2.mp4"
     },
     {
@@ -423,7 +372,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__dancing_robot",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/dancing_robot",
       "source_rel": "consistent4d/in-the-wild__dancing_robot/r76_seed1.mp4"
     },
     {
@@ -433,7 +381,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__dancing_spiderman",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/dancing_spiderman",
       "source_rel": "consistent4d/in-the-wild__dancing_spiderman/r76_seed0.mp4"
     },
     {
@@ -443,7 +390,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__looking_around_jack_russell",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/looking_around_jack_russell",
       "source_rel": "consistent4d/in-the-wild__looking_around_jack_russell/r76_seed0.mp4"
     },
     {
@@ -453,7 +399,6 @@
       "path": "examples/test_images/dynamic/human__0032_02_view01",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0032_02_view01/frames",
       "source_rel": "human/0032_02_view01/r76_seed2.mp4"
     },
     {
@@ -463,7 +408,6 @@
       "path": "examples/test_images/dynamic/human__0643_02_view25",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0643_02_view25/frames",
       "source_rel": "human/0643_02_view25/r76_seed0.mp4"
     },
     {
@@ -473,7 +417,6 @@
       "path": "examples/test_images/dynamic/human__0657_06_view22",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0657_06_view22/frames",
       "source_rel": "human/0657_06_view22/r76_seed0.mp4"
     },
     {
@@ -483,7 +426,6 @@
       "path": "examples/test_images/dynamic/consistent4d_synthetic__walking_siamese_cat",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/synthetic/walking_siamese_cat",
       "source_rel": "consistent4d/synthetic__walking_siamese_cat/r76_seed1.mp4"
     },
     {
@@ -493,7 +435,6 @@
       "path": "examples/test_images/dynamic/human__0428_05_view01",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0428_05_view01/frames",
       "source_rel": "human/0428_05_view01/r76_seed1.mp4"
     },
     {
@@ -503,7 +444,6 @@
       "path": "examples/test_images/dynamic/consistent4d_synthetic__running_triceratops",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/synthetic/running_triceratops",
       "source_rel": "consistent4d/synthetic__running_triceratops/r76_seed0.mp4"
     },
     {
@@ -513,7 +453,6 @@
       "path": "examples/test_images/dynamic/human__0094_02_view25",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0094_02_view25/frames",
       "source_rel": "human/0094_02_view25/r76_seed1.mp4"
     },
     {
@@ -523,7 +462,6 @@
       "path": "examples/test_images/dynamic/human__0173_03_view01",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0173_03_view01/frames",
       "source_rel": "human/0173_03_view01/r76_seed0.mp4"
     },
     {
@@ -533,7 +471,6 @@
       "path": "examples/test_images/dynamic/human__0306_06_view25",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0306_06_view25/frames",
       "source_rel": "human/0306_06_view25/r76_seed1.mp4"
     },
     {
@@ -543,7 +480,6 @@
       "path": "examples/test_images/dynamic/human__0319_03_view22",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0319_03_view22/frames",
       "source_rel": "human/0319_03_view22/r76_seed0.mp4"
     },
     {
@@ -553,7 +489,6 @@
       "path": "examples/test_images/dynamic/human__0386_03_view07",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0386_03_view07/frames",
       "source_rel": "human/0386_03_view07/r76_seed1.mp4"
     },
     {
@@ -563,7 +498,6 @@
       "path": "examples/test_images/dynamic/human__0391_02_view01",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0391_02_view01/frames",
       "source_rel": "human/0391_02_view01/r76_seed1.mp4"
     },
     {
@@ -573,7 +507,6 @@
       "path": "examples/test_images/dynamic/human__0467_08_view22",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0467_08_view22/frames",
       "source_rel": "human/0467_08_view22/r76_seed0.mp4"
     },
     {
@@ -583,7 +516,6 @@
       "path": "examples/test_images/dynamic/human__0493_07_view17",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0493_07_view17/frames",
       "source_rel": "human/0493_07_view17/r76_seed0.mp4"
     },
     {
@@ -593,7 +525,6 @@
       "path": "examples/test_images/dynamic/human__0509_06_view42",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0509_06_view42/frames",
       "source_rel": "human/0509_06_view42/r76_seed2.mp4"
     },
     {
@@ -603,7 +534,6 @@
       "path": "examples/test_images/dynamic/human__0756_07_view22",
       "num_frames": 16,
       "source_total_frames": 64,
-      "source_dir": "/home/hao/code/test_images/Video-human-dynamic/0756_07_view22/frames",
       "source_rel": "human/0756_07_view22/r76_seed0.mp4"
     },
     {
@@ -613,7 +543,6 @@
       "path": "examples/test_images/dynamic/davis__bear",
       "num_frames": 16,
       "source_total_frames": 82,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/bear/frames",
       "source_rel": "davis/bear/r76_seed0.mp4"
     },
     {
@@ -623,7 +552,6 @@
       "path": "examples/test_images/dynamic/davis__breakdance",
       "num_frames": 16,
       "source_total_frames": 84,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/breakdance/frames",
       "source_rel": "davis/breakdance/r76_seed3.mp4"
     },
     {
@@ -633,7 +561,6 @@
       "path": "examples/test_images/dynamic/davis__breakdance-flare",
       "num_frames": 16,
       "source_total_frames": 71,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/breakdance-flare/frames",
       "source_rel": "davis/breakdance-flare/r76_seed1.mp4"
     },
     {
@@ -643,7 +570,6 @@
       "path": "examples/test_images/dynamic/davis__cows",
       "num_frames": 16,
       "source_total_frames": 104,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/cows/frames",
       "source_rel": "davis/cows/r76_seed0.mp4"
     },
     {
@@ -653,7 +579,6 @@
       "path": "examples/test_images/dynamic/davis__dance-twirl",
       "num_frames": 16,
       "source_total_frames": 90,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/dance-twirl/frames",
       "source_rel": "davis/dance-twirl/r76_seed0.mp4"
     },
     {
@@ -663,7 +588,6 @@
       "path": "examples/test_images/dynamic/davis__flamingo",
       "num_frames": 16,
       "source_total_frames": 80,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/flamingo/frames",
       "source_rel": "davis/flamingo/r76_seed1.mp4"
     },
     {
@@ -673,7 +597,6 @@
       "path": "examples/test_images/dynamic/davis__hike",
       "num_frames": 16,
       "source_total_frames": 80,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/hike/frames",
       "source_rel": "davis/hike/r76_seed1.mp4"
     },
     {
@@ -683,7 +606,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__looking_up_kitten",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/looking_up_kitten",
       "source_rel": "consistent4d/in-the-wild__looking_up_kitten/r76_seed0.mp4"
     },
     {
@@ -693,7 +615,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__pecking_blue_jay",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/pecking_blue_jay",
       "source_rel": "consistent4d/in-the-wild__pecking_blue_jay/r76_seed1.mp4"
     },
     {
@@ -703,7 +624,6 @@
       "path": "examples/test_images/dynamic/consistent4d_in_the_wild__walking_white_faced_egret",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/in-the-wild/walking_white_faced_egret",
       "source_rel": "consistent4d/in-the-wild__walking_white_faced_egret/r76_seed2.mp4"
     },
     {
@@ -713,7 +633,6 @@
       "path": "examples/test_images/dynamic/davis__lucia",
       "num_frames": 16,
       "source_total_frames": 70,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/lucia/frames",
       "source_rel": "davis/lucia/r76_seed1.mp4"
     },
     {
@@ -723,7 +642,6 @@
       "path": "examples/test_images/dynamic/consistent4d_synthetic__sighing_frog",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/synthetic/sighing_frog",
       "source_rel": "consistent4d/synthetic__sighing_frog/r76_seed3.mp4"
     },
     {
@@ -733,7 +651,6 @@
       "path": "examples/test_images/dynamic/consistent4d_synthetic__swimming_guppie",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/synthetic/swimming_guppie",
       "source_rel": "consistent4d/synthetic__swimming_guppie/r76_seed0.mp4"
     },
     {
@@ -743,7 +660,6 @@
       "path": "examples/test_images/dynamic/consistent4d_synthetic__swimming_yellow_tang",
       "num_frames": 16,
       "source_total_frames": 32,
-      "source_dir": "/home/hao/code/test_images/Consistent4D/synthetic/swimming_yellow_tang",
       "source_rel": "consistent4d/synthetic__swimming_yellow_tang/r76_seed1.mp4"
     },
     {
@@ -753,7 +669,6 @@
       "path": "examples/test_images/dynamic/davis__tennis",
       "num_frames": 16,
       "source_total_frames": 70,
-      "source_dir": "/home/hao/code/test_images/Video-DAVIS-RGBA/tennis/frames",
       "source_rel": "davis/tennis/r76_seed2.mp4"
     }
   ],
