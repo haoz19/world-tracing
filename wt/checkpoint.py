@@ -265,6 +265,9 @@ CONFIGS = {
             output_mode="xyz",
             model_task="split_token",
             depth_only=True,
+            # The current dynamic checkpoint was trained with frame-correlated
+            # prior noise; sampling must use the same prior.
+            noise_time_corr=0.5,
         ),
     },
 }

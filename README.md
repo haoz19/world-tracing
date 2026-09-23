@@ -60,6 +60,15 @@ behind it, giving a richer 3D scaffold than a single mono-depth map.
 
 This is the inference-only release.
 
+> 🆕 **Update (2026-09-23): new object and dynamic checkpoints.** The
+> released **object** ([`haoz19/object-model-6layer`](https://huggingface.co/haoz19/object-model-6layer))
+> and **dynamic** ([`haoz19/dynamic-model-16frame`](https://huggingface.co/haoz19/dynamic-model-16frame))
+> checkpoints have been updated with stronger models. Run `git pull` and
+> re-run inference: the new weights are downloaded automatically. Please
+> update the code together with the weights (the new dynamic model requires
+> the updated sampler). The [interactive demo](https://huggingface.co/spaces/haoz19/world-tracing-demo)
+> runs the new checkpoints as well.
+
 > 💛 **If you find World Tracing useful**, please consider [⭐ starring this
 > repo](https://github.com/haoz19/world-tracing) and [citing our
 > paper](#citation) — it really helps us prioritise future releases.
@@ -70,9 +79,9 @@ The released checkpoints are hosted on **Hugging Face Hub**:
 
 | config name | task | image size | params | Hugging Face repo |
 | --- | --- | --- | --- | --- |
-| `r75b` | object | 504 × 504 | 1.7 B | [`haoz19/object-model-6layer`](https://huggingface.co/haoz19/object-model-6layer) |
+| `r75b` | object | 504 × 504 | 1.7 B | [`haoz19/object-model-6layer`](https://huggingface.co/haoz19/object-model-6layer) (updated 2026-09-23) |
 | `r69l` | scene | 840 × 840 | 1.5 B | [`haoz19/scene-model-6layer-840`](https://huggingface.co/haoz19/scene-model-6layer-840) |
-| `r76`  | dynamic object (16 frames) | 336 × 336 | 2.1 B | [`haoz19/dynamic-model-16frame`](https://huggingface.co/haoz19/dynamic-model-16frame) |
+| `r76`  | dynamic object (16 frames) | 336 × 336 | 2.1 B | [`haoz19/dynamic-model-16frame`](https://huggingface.co/haoz19/dynamic-model-16frame) (updated 2026-09-23) |
 
 > **Scene model — `r69l` (840 × 840).** The released scene model is the
 > high-resolution `r69l` checkpoint

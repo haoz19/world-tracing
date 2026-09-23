@@ -17,6 +17,7 @@ it with a small Euler ODE sampler in :mod:`wt.sampling`.
 from __future__ import annotations
 
 import contextlib
+import math
 
 import numpy as np
 import torch
@@ -518,6 +519,35 @@ def inference_diffusion_multiview(
 # ---------------------------------------------------------------------------
 
 
+def time_correlated_noise(
+    batch_size: int,
+    num_time: int,
+    num_layers: int,
+    height: int,
+    width: int,
+    nc: int,
+    rho: float,
+    device: torch.device,
+) -> torch.Tensor:
+    """Initial flow-matching noise shared across frames with correlation ``rho``:
+    ``x[t] = sqrt(rho) * eps_shared + sqrt(1 - rho) * eps_t``.  Returned in the
+    ``[B, C, T*L, H, W]`` layout of :func:`inference_video_diffusion`; the random
+    draws are made in the same order and shape as training so a fixed seed
+    reproduces the training-code sampler."""
+    if not 0.0 <= rho <= 1.0:
+        raise ValueError(f"noise_time_corr must be in [0, 1], got {rho}")
+    per_frame = num_layers * height * width
+    shared = torch.randn(batch_size, 1, per_frame, nc, device=device)
+    indep = torch.randn(batch_size, num_time, per_frame, nc, device=device)
+    x = math.sqrt(rho) * shared + math.sqrt(1.0 - rho) * indep
+    return (
+        x.reshape(batch_size, num_time, num_layers, height, width, nc)
+        .permute(0, 5, 1, 2, 3, 4)
+        .reshape(batch_size, nc, num_time * num_layers, height, width)
+        .contiguous()
+    )
+
+
 @torch.no_grad()
 def inference_video_diffusion(
     model,
@@ -537,12 +567,18 @@ def inference_video_diffusion(
     model_task: str = "split_token",
     depth_only: bool = False,
     invalid_fill_mode: str | None = None,
+    noise_time_corr: float = 0.0,
 ) -> tuple[torch.Tensor | None, torch.Tensor, torch.Tensor | None]:
     """r76-style video diffusion (T frames jointly).
 
     Identical semantics to :func:`inference_diffusion` per-frame, but all T
     frames are denoised jointly so the model's temporal attention blocks can
     couple them.  ``rgb_clip`` has shape ``[B, T, 3, H, W]``.
+
+    ``noise_time_corr`` (rho) draws the initial noise correlated across frames
+    (every pair of frames shares correlation ``rho``, marginals stay N(0, 1)).
+    It must match the value the checkpoint was trained with; the released
+    ``r76`` config sets it.
     """
     del total_elements
     model.eval()
@@ -585,7 +621,10 @@ def inference_video_diffusion(
         valid_mask_flat = gt_mask_clip.bool().reshape(batch_size, -1, 1).float()
         conditioning["valid_mask"] = valid_mask_flat
 
-    x_t = torch.randn(batch_size, nc, TL, height, width, device=device)
+    if noise_time_corr > 0.0 and num_time > 1:
+        x_t = time_correlated_noise(batch_size, num_time, num_layers, height, width, nc, noise_time_corr, device)
+    else:
+        x_t = torch.randn(batch_size, nc, TL, height, width, device=device)
     if cfm_mask and model_task in ("mask", "joint", "split_token"):
         if cfm_noise_type == "uniform_0_1" or cfm_uniform_noise:
             x_t[:, nc - 1] = torch.rand_like(x_t[:, nc - 1])
