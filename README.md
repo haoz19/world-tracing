@@ -24,6 +24,7 @@
 <sup>1</sup>World Labs &nbsp; &nbsp; <sup>2</sup>University of Illinois Urbana-Champaign
 
 <p>
+  <a href="https://haoz19.github.io/world-tracing-page/"><img alt="NeurIPS 2026 Spotlight" src="https://img.shields.io/badge/NeurIPS%202026-Spotlight-9a3412?style=for-the-badge"></a>
   <a href="https://arxiv.org/abs/2606.13652"><img alt="Paper" src="https://img.shields.io/badge/Paper-arXiv-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white"></a>
   <a href="https://huggingface.co/haoz19"><img alt="Hugging Face Models" src="https://img.shields.io/badge/Hugging%20Face-Model-FFD21E?style=for-the-badge&logo=huggingface&logoColor=white"></a>
   <a href="https://huggingface.co/spaces/haoz19/world-tracing-demo"><img alt="Hugging Face Demo" src="https://img.shields.io/badge/Hugging%20Face-Demo-9333EA?style=for-the-badge&logo=huggingface&logoColor=white"></a>
@@ -348,12 +349,14 @@ smaller resolution.
 ## Citation
 
 ```bibtex
-@misc{zhang2026worldtracinggenerativepixelaligned,
+@inproceedings{zhang2026worldtracinggenerativepixelaligned,
   title         = {World Tracing: Generative Pixel-Aligned Geometry Beyond the Visible},
   author        = {Hao Zhang and Mohamed El Banani and Jen-Hao Cheng and Paul Zhang
                    and Yi Hua and Ben Mildenhall and Christoph Lassner
                    and Narendra Ahuja and Gengshan Yang},
+  booktitle     = {Advances in Neural Information Processing Systems (NeurIPS)},
   year          = {2026},
+  note          = {Spotlight},
   eprint        = {2606.13652},
   archivePrefix = {arXiv},
   primaryClass  = {cs.CV},
