@@ -207,6 +207,19 @@ The model was trained on **16-frame clips** (frame stride 1-3) of
   frames fall back to per-frame automatic matting, which is noticeably
   worse.
 
+To confirm that your setup reproduces our results, run
+
+```bash
+python examples/check_reproduction.py
+```
+
+It downloads five DAVIS clips prepared exactly like our evaluation inputs
+together with our outputs for them (from
+[`haoz19/dynamic-model-16frame/reproduce/davis`](https://huggingface.co/haoz19/dynamic-model-16frame/tree/main/reproduce/davis)),
+runs them through your install with seeds 42-45 and prints the per-clip
+depth difference with a PASS / FAIL verdict (`--seeds 42` for a quick
+check).
+
 ### 4. Choosing a different seed
 
 The default 4-seed sweep emits all four samples in a single ``.rrd``,
@@ -347,7 +360,7 @@ Tested on a single NVIDIA A100 / H100 (80 GB) with bfloat16 autocast.
 | --- | --- | --- |
 | `r75b`  | 504 × 504           | ~13 s / image |
 | `r69l`  | 840 × 840           | ~17 s / image |
-| `r76`   | 336 × 336 × 16 frames | ~85 s / clip  |
+| `r76`   | 336 × 336 × 16 frames | ~35 s / clip  |
 
 The default 4-seed sweep is therefore ~4× the single-seed numbers above.
 Smaller GPUs work with reduced ``--num-steps`` or by sampling at a
