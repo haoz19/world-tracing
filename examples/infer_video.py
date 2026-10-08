@@ -24,7 +24,9 @@ Hand-picked 16-frame dynamic clips live under
 ``examples/test_images/dynamic/`` -- see ``examples/test_images/README.md``.
 
 ``frame_indices`` is optional; without it all frames in the directory are
-loaded in sorted order.
+loaded in sorted order.  The model was trained on 16-frame RGBA clips, so
+for a longer sequence pick 16 frames (e.g. every 2nd of the first 31) and
+supply accurate alpha masks.
 
 The output ``.rrd`` uses the ``frame`` timeline (one entry per loaded
 frame), so scrubbing through it animates the predicted point cloud over
@@ -42,6 +44,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from PIL import Image
 
 from wt import inference_video_diffusion, solve_intrinsics_from_xyz
 from wt.checkpoint import build_model_and_load_ckpt
@@ -54,6 +57,8 @@ from wt.viz import (
     log_video_multiseed_prediction,
     save_rrd,
 )
+
+TRAIN_CLIP_LENGTH = 16
 
 
 def _parse_frame_indices(raw: str | None) -> list[int] | None:
@@ -111,6 +116,24 @@ def main():
         auto_alpha=not args.no_auto_alpha,
     )
     print(f"[wt] loaded {len(rgba_list)} frame(s) from {args.image_dir}")
+    if len(rgba_list) != TRAIN_CLIP_LENGTH:
+        print(
+            f"[wt] WARNING: clip has T={len(rgba_list)} frames but the model "
+            f"was trained on T={TRAIN_CLIP_LENGTH}; results degrade away from "
+            f"it.  Pick {TRAIN_CLIP_LENGTH} frames with --frame_indices, e.g. "
+            f"'{','.join(str(2 * i) for i in range(TRAIN_CLIP_LENGTH))}'."
+        )
+    n_no_alpha = sum(
+        Image.open(args.image_dir / name).mode != "RGBA" for name in frame_names
+    )
+    if n_no_alpha:
+        print(
+            f"[wt] WARNING: {n_no_alpha}/{len(frame_names)} frame(s) have no "
+            "alpha channel; their object masks were estimated automatically "
+            "per frame.  The model conditions on the mask, so supply RGBA "
+            "frames with accurate masks (e.g. DAVIS annotations) for best "
+            "results."
+        )
 
     bg_color = parse_bg_color(args.bg_color)
     rgb_clip, mask_clip, intr_t, rgb_resized = preprocess_clip_for_model(

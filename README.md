@@ -182,8 +182,9 @@ the pipeline) before feeding the result into `infer_scene.py`.
 ### 3. Dynamic clip (`r76`)
 
 ```bash
+# davis__camel/ holds 16 RGBA PNG frames
 python examples/infer_video.py \
-    --image_dir examples/test_images/dynamic/davis__camel/   # 16 PNG frames
+    --image_dir examples/test_images/dynamic/davis__camel/ \
     --ckpt      r76 \
     --config    r76 \
     --out       /tmp/wt_camel.rrd
@@ -192,8 +193,19 @@ python examples/infer_video.py \
 The resulting `.rrd` uses the `frame` timeline; scrub the slider in
 Rerun to animate the predicted point cloud over time.  All frames share
 a single crop so the temporal-attention blocks can establish per-pixel
-correspondences.  Pass ``--frame_indices "0,2,4,6,8,10,12,14"`` to pick
-a subset of the 16 supplied frames.
+correspondences.
+
+The model was trained on **16-frame clips** (frame stride 1-3) of
+**RGBA frames**, and expects the same at inference:
+
+* For a longer sequence, pick 16 frames with ``--frame_indices``, e.g.
+  ``--frame_indices "0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30"``
+  (this is how our DAVIS results are produced).  Without it every frame
+  in the folder is used as one clip.
+* The alpha channel is the object mask the model conditions on.  Supply
+  RGBA frames with accurate masks (e.g. the DAVIS annotations); RGB-only
+  frames fall back to per-frame automatic matting, which is noticeably
+  worse.
 
 ### 4. Choosing a different seed
 
@@ -335,7 +347,7 @@ Tested on a single NVIDIA A100 / H100 (80 GB) with bfloat16 autocast.
 | --- | --- | --- |
 | `r75b`  | 504 × 504           | ~13 s / image |
 | `r69l`  | 840 × 840           | ~17 s / image |
-| `r76`   | 336 × 336 × 8 frames | ~30 s / clip  |
+| `r76`   | 336 × 336 × 16 frames | ~85 s / clip  |
 
 The default 4-seed sweep is therefore ~4× the single-seed numbers above.
 Smaller GPUs work with reduced ``--num-steps`` or by sampling at a
