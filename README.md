@@ -82,6 +82,7 @@ The released checkpoints are hosted on **Hugging Face Hub**:
 | --- | --- | --- | --- | --- |
 | `r75b` | object | 504 × 504 | 1.7 B | [`haoz19/object-model-6layer`](https://huggingface.co/haoz19/object-model-6layer) (updated 2026-09-23) |
 | `r69l` | scene | 840 × 840 | 1.5 B | [`haoz19/scene-model-6layer-840`](https://huggingface.co/haoz19/scene-model-6layer-840) |
+| `r69e` | scene (paper WT-S, Table 2) | 504 × 504 | 1.5 B | [`haoz19/scene-model-6layer`](https://huggingface.co/haoz19/scene-model-6layer) (updated 2026-10-30) |
 | `r76`  | dynamic object (16 frames) | 336 × 336 | 2.1 B | [`haoz19/dynamic-model-16frame`](https://huggingface.co/haoz19/dynamic-model-16frame) (updated 2026-09-23) |
 
 > **Scene model — `r69l` (840 × 840).** The released scene model is the
@@ -92,6 +93,11 @@ The released checkpoints are hosted on **Hugging Face Hub**:
 > [interactive demo](https://huggingface.co/spaces/haoz19/world-tracing-demo).
 > It must be run at 840 × 840 (the `r69l` config in `wt/checkpoint.py`
 > handles this); feeding it 504-res inputs is heavily out-of-distribution.
+>
+> **Scene model — `r69e` (504 × 504).** The scene model evaluated in the
+> paper (WT-S), trained on synthetic indoor renders only.  Use it to
+> reproduce or compare against the 3D-FRONT numbers of Table 2 — see
+> [`benchmarks/3dfront`](benchmarks/3dfront).
 
 Pass `--ckpt <config-name>` (e.g. `--ckpt r75b`) and `wt` will fetch the
 weights from the Hub on first use and cache them under
@@ -350,6 +356,9 @@ examples/
 ├── infer_scene.py        ← Single scene RGB (r69l; 4-seed sweep by default)
 ├── infer_video.py        ← Dynamic clip (r76; 4-seed sweep by default)
 └── infer_textured_mesh.py ← Image → multilayer geometry → TRELLIS.2 stages 2+3 → textured GLB (4-seed sweep by default)
+
+benchmarks/
+└── 3dfront/              ← Table 2 3D-FRONT benchmark (50 held-out frames; r69e by default, or your own predictions)
 ```
 
 ## Hardware

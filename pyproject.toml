@@ -73,6 +73,10 @@ textured-mesh = [
     "scipy>=1.11",
     "trimesh>=4.0",
 ]
+# benchmarks/3dfront (Chamfer distances).
+eval = [
+    "scipy>=1.11",
+]
 dev = [
     "ruff>=0.4",
     "pytest>=7",
